@@ -22,6 +22,26 @@ npm run dev -- --host 127.0.0.1
 
 Abrir `http://127.0.0.1:5173`. La documentación interactiva del API está en `http://127.0.0.1:8000/docs`. Para compilar el cliente: `cd frontend; npm run build`.
 
+### Si la interfaz no inicia
+
+El servidor de desarrollo debe mantener activa la preparación de dependencias de
+Vite (`optimizeDeps`). React publica entradas CommonJS; desactivar esa preparación
+produce errores como `react/jsx-runtime.js does not provide an export named 'jsx'`
+y deja la pantalla en «Iniciando el dashboard». La configuración incluye
+explícitamente React y sus runtimes JSX para convertirlos a módulos de navegador.
+Después de actualizar la configuración, recargar la página. Si el servidor se
+había detenido, ejecutar otra vez `npm run dev` desde `frontend`.
+
+Para usar la versión compilada, desde `frontend`:
+
+```powershell
+npm run build
+npm run preview -- --port 4173 --strictPort
+```
+
+Esa versión se abre en `http://127.0.0.1:4173`. Los cambios de código requieren una
+nueva compilación; el backend debe continuar activo en el puerto 8000.
+
 ## Funciones
 
 - Resumen del estado histórico y última inspección disponible (la pantalla no afirma que los datos sean telemetría en vivo).
