@@ -11,6 +11,8 @@
   "effective_delta_formula_matches": true,
   "effective_rate_policy_matches": true,
   "measurement_uncertainty_metadata_matches": true,
+  "media_evidence_metadata_matches": true,
+  "html_discloses_photo_limit": true,
   "html_contains_tolerance_and_reclassification": true,
   "source_unchanged": true,
   "null_not_converted_to_zero": true,

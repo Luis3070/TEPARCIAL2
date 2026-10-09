@@ -38,6 +38,19 @@
       "Esquema"
     ]
   },
+  "media_evidence": {
+    "excel_image_references": [
+      "EH4_SD_tijeras_spindle.png"
+    ],
+    "unresolved_external_references": [
+      "EH4_SD_tijeras_spindle.png"
+    ],
+    "available_sd_location_drawing": "frontend\\public\\assets\\schemes\\sd_inspection_reference.png",
+    "location_drawing_source": "DATOSCRUDOS\\EH4000_formato_inspeccion.docx",
+    "location_drawing_available": true,
+    "word_source_available": true,
+    "interpretation": "El esquema del Word sirve para ubicar puntos SD; no equivale a fotografías históricas de campo. No se imputan ni fabrican fotos."
+  },
   "dataset": {
     "period_start": "2023-01-16",
     "period_end": "2025-05-14",

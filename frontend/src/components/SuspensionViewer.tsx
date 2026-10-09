@@ -171,7 +171,7 @@ export function SuspensionViewer({points,selectedPoint,onSelect,calibratingPoint
     </Canvas>
    </ErrorBoundary>}
    <div className="viewer-badge"><i className="live-dot"/> Condición histórica <b>NO EN VIVO</b></div>
-   {calibratingPoint&&<div className="calibration-banner"><Crosshair size={15}/><span>Calibración de <b>{calibratingPoint}</b>: haz clic sobre su ubicación física en la malla</span><small>Posición pendiente de confirmación de ingeniería</small></div>}
+   {calibratingPoint&&<div className="calibration-banner"><Crosshair size={15}/><span>Calibración de <b>{calibratingPoint}</b>: haz clic sobre su ubicación física en la malla</span><small>La marca posterior solo registra una comprobación visual en el visor</small></div>}
    {calibrationResult&&<div className="calibration-result"><Check size={14}/>Posición guardada · {calibrationResult}</div>}
    {!points.some(p=>p.calibration)&&!calibratingPoint&&<div className="uncalibrated-note"><ShieldAlert size={16}/><span>Hotspots sin calibrar. Activa calibración desde Ajustes para ubicar los cuatro puntos sobre el STL.</span></div>}
    <div className="model-state-legend">{(['Normal','Alerta','Crítico','N/I'] as StructuralState[]).map(s=><span key={s}><i style={{background:conditionColor[s]}}/>{s}</span>)}</div>

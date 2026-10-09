@@ -215,8 +215,8 @@ def main() -> None:
             ref_rows = candidates[candidates["Imagen"].astype(str).eq(image_ref)]
             first_ref = ref_rows.iloc[0]
             finding("WARNING", first_ref["Fecha"], first_ref["codigo"], "Imagen", image_ref, None,
-                    "El metadato referencia una imagen que no está disponible junto al Excel; no hay imagen incrustada para verificar.",
-                    "Paquete de evidencias incompleto o ruta externa no incluida", "Solicitar la imagen original y verificar correspondencia con el punto", first_ref["fila_excel"])
+                    "El Excel referencia un archivo externo no incluido en DATOSCRUDOS. El Word aporta un esquema SD de ubicación, no una fotografía histórica de inspección.",
+                    "El paquete fuente no incluye el PNG histórico referenciado", "Mantener la ausencia explícita; usar el esquema como referencia de ubicación y solicitar fotos solo si se requieren como evidencia histórica", first_ref["fila_excel"])
     for _, r in inspections.iterrows():
         if bool(r["horometro_decreciente"]):
             pos = inspections.index[inspections["Fecha"].eq(r["Fecha"])][0]
@@ -495,8 +495,16 @@ def main() -> None:
     n_fail=int((tests_df.status=="FAIL").sum()); n_warn=int((tests_df.status=="WARNING").sum())
     quality="NO APTO" if n_fail else "APTO CON OBSERVACIONES" if n_warn or n_null or len(anomalies_df) else "APTO"
     all_dates=scope["Fecha"].dropna()
+    sd_scheme_asset=ROOT/"frontend"/"public"/"assets"/"schemes"/"sd_inspection_reference.png"
+    word_source=ROOT/"DATOSCRUDOS"/"EH4000_formato_inspeccion.docx"
+    media_evidence={"excel_image_references":image_refs,"unresolved_external_references":missing_image_refs,
+      "available_sd_location_drawing":str(sd_scheme_asset.relative_to(ROOT)) if sd_scheme_asset.exists() else None,
+      "location_drawing_source":str(word_source.relative_to(ROOT)),"location_drawing_available":sd_scheme_asset.exists(),
+      "word_source_available":word_source.exists(),
+      "interpretation":"El esquema del Word sirve para ubicar puntos SD; no equivale a fotografías históricas de campo. No se imputan ni fabrican fotos."}
     summary={"source_file":str(SOURCE.relative_to(ROOT)), "source_sha256":__import__("hashlib").sha256(SOURCE.read_bytes()).hexdigest(),
       "scope":{"equipment":EXPECTED_EQUIPMENT,"zone":EXPECTED_ZONE,"points":POINTS}, "workbook":{"sheet_names":sheet_names,"columns_historial":list(raw_hist.columns),"columns_puntos":list(raw_points.columns)},
+      "media_evidence":media_evidence,
       "dataset":{"period_start":all_dates.min(),"period_end":all_dates.max(),"inspections":int(date_count),"inspectors":int(scope["Inspector"].nunique(dropna=True)),
         "expected_records":int(expected),"existing_records":int(existing),"numeric_measurements":int(scope["L actual (mm)"].notna().sum()),"null_measurements":n_null,
         "completeness_pct":float(scope["L actual (mm)"].notna().mean()*100 if existing else 0),"by_point":completeness,"by_inspector":by_inspector.to_dict(orient="records"),
@@ -535,7 +543,7 @@ def main() -> None:
     <div class='status'><b>Clasificación: {quality}</b><br>Periodo {all_dates.min():%Y-%m-%d} – {all_dates.max():%Y-%m-%d}; {date_count} inspecciones, {existing}/{expected} filas, completitud de medición {fmt(summary['dataset']['completeness_pct'])}%.</div>
     <h2>Resumen ejecutivo</h2><p>Se encontraron {n_null} mediciones NULL, {int(dups.sum())} filas duplicadas según (Fecha, Equipo, Código), {int(inspections.horometro_decreciente.sum())} decrementos del horómetro y {len(maintenance_out)} filas de evento documental, agrupadas en {maintenance_out['Fecha'].nunique() if len(maintenance_out) else 0} fecha(s). La anotación del 2025-01-07 identifica una reparación general; se excluyen de velocidad los intervalos que tocan el evento.</p>
     <h2>Tolerancia operacional</h2><p>MEASUREMENT_TOLERANCE_MM = {MEASUREMENT_TOLERANCE_MM:g} mm; aplica únicamente a cambios entre inspecciones. structural_state se calcula con L RAW y límites oficiales, sin tolerancia.</p><p>Conteos change_class: {change_class_counts}.</p><h3>Anomalías previas reclasificadas</h3>{reclass_html}
-    <h2>Metadata</h2><p>Hojas: {', '.join(sheet_names)}. Columnas Historial: {', '.join(map(str,raw_hist.columns))}. Columna de imagen presente: sí; imágenes embebidas no se usan para inferir mediciones.</p>
+    <h2>Metadata</h2><p>Hojas: {', '.join(sheet_names)}. Columnas Historial: {', '.join(map(str,raw_hist.columns))}. Columna de imagen presente: sí; imágenes embebidas no se usan para inferir mediciones.</p><h3>Trazabilidad de imágenes</h3><p>Referencias del Excel sin archivo externo: {', '.join(missing_image_refs) if missing_image_refs else 'ninguna'}. El Word contiene el esquema oficial de ubicación SD; no se recibió una fotografía histórica de campo. La aplicación lo presenta como esquema, no como evidencia fotográfica.</p>
     <h2>Tests estructurales</h2>{test_html}<h2>Estadísticas temporales</h2>{stats_table('Δdías',interval_stats['delta_dias'])}{stats_table('Δhoras',interval_stats['delta_horas'])}<p>Cercas robustas IQR: días [{fmt(d_lo)}, {fmt(d_hi)}]; horas [{fmt(h_lo)}, {fmt(h_hi)}]. Detección descriptiva, no dictamen de error.</p>
     <h2>Estadísticas por punto</h2><table><thead><tr><th>Punto</th><th>Caution</th><th>Danger</th><th>Máximo</th><th>Fecha máximo</th><th>Primera &gt;0</th><th>Primera alerta</th><th>Primera crítica</th><th>Normal</th><th>Alerta</th><th>Crítico</th><th>N/I</th></tr></thead><tbody>{point_rows}</tbody></table>
     <h2>Valores faltantes</h2>{missing_html}<h2>Anomalías y hallazgos</h2>{anomaly_html}<h2>Eventos de mantenimiento</h2>{maint_html}<h2>Inspector por completitud</h2>{by_inspector.to_html(index=False,escape=True)}<p>La secuencia por inspector es descriptiva. Con 25 fechas y rotación temporal, estos datos no permiten separar estadísticamente el efecto del inspector del efecto temporal ni afirmar causalidad.</p>
@@ -569,6 +577,8 @@ def main() -> None:
       "growth_csv_columns_present":required_growth_cols.issubset(reread_growth.columns),
       "effective_delta_formula_matches":bool(csv_effective_matches),"effective_rate_policy_matches":bool(csv_rate_policy),
       "measurement_uncertainty_metadata_matches":reread_summary.get("measurement_uncertainty")=={"tolerance_mm":MEASUREMENT_TOLERANCE_MM,"purpose":"Interpretación de cambio entre inspecciones","affects_structural_state":False},
+      "media_evidence_metadata_matches":reread_summary.get("media_evidence",{}).get("unresolved_external_references")==missing_image_refs and reread_summary.get("media_evidence",{}).get("location_drawing_available")==sd_scheme_asset.exists() and reread_summary.get("media_evidence",{}).get("word_source_available")==word_source.exists(),
+      "html_discloses_photo_limit":"no se recibió una fotografía histórica de campo" in (OUT/"QA_REPORT.html").read_text(encoding="utf-8"),
       "html_contains_tolerance_and_reclassification":"Anomalías previas reclasificadas" in (OUT/"QA_REPORT.html").read_text(encoding="utf-8") and "MEASUREMENT_TOLERANCE_MM" in (OUT/"QA_REPORT.html").read_text(encoding="utf-8"),
       "source_unchanged":source_hash_after==summary["source_sha256"],
       "null_not_converted_to_zero":int(reread_ins["L actual (mm)"].isna().sum())==n_null and int((reread_ins["L actual (mm)"].fillna(999999)==0).sum())==int((scope["L actual (mm)"]==0).sum()),

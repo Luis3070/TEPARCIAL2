@@ -4,8 +4,21 @@ import math
 from typing import Any
 
 
+def structural_state_for(length_mm: float | None, caution_mm: float, danger_mm: float) -> str:
+    """Return the official state from RAW length; a missing value remains N/I."""
+    if caution_mm >= danger_mm:
+        raise ValueError("Caution must be lower than Danger.")
+    if length_mm is None:
+        return "N/I"
+    if length_mm < caution_mm:
+        return "Normal"
+    if length_mm < danger_mm:
+        return "Alerta"
+    return "Crítico"
+
+
 def decision(row: Any, first_post_repair: bool, first_valid_measure: bool) -> tuple[str, str | None, str | None, str]:
-    """Version 1 validated policy; states always derive from the RAW length."""
+    """Version 1 deterministic decision aid; this does not imply engineer endorsement."""
     state = row["structural_state"]
     change = row["change_class"]
     L, caution, danger = row["L_raw_mm"], row["caution_mm"], row["danger_mm"]

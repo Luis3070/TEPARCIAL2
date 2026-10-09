@@ -110,7 +110,9 @@ def test_hotspot_calibration_and_evidence_persist(client):
     before=client.get("/api/3d/hotspots").json()
     assert len(before)==4
     saved=client.put("/api/3d/hotspots/SD-01",json={"x":1.0,"y":2.0,"z":3.0,"nx":0,"ny":1,"nz":0,"confirmed":False,"calibrated_by":"TEST"})
-    assert saved.status_code==200 and saved.json()["calibration_status"]=="UNVERIFIED"
+    assert saved.status_code==200 and saved.json()["calibration_status"]=="PROVISIONAL"
+    visually_checked=client.put("/api/3d/hotspots/SD-01",json={"x":1.0,"y":2.0,"z":3.0,"nx":0,"ny":1,"nz":0,"confirmed":True,"calibrated_by":"TEST"})
+    assert visually_checked.status_code==200 and visually_checked.json()["calibration_status"]=="VISUALLY_CHECKED"
     latest=client.get("/api/inspections?limit=1").json()[0]
     response=client.post("/api/evidence",data={"inspection_id":str(latest["id"]),"point":"SD-01","notes":"Integration test evidence"},
         files={"file":("evidence.png",b"test-image-bytes","image/png")})
@@ -118,3 +120,5 @@ def test_hotspot_calibration_and_evidence_persist(client):
     evidence=response.json()
     assert client.get(f"/api/evidence/{evidence['id']}").status_code==200
     assert client.get("/api/evidence?point=SD-01").json()[0]["inspection_id"]==latest["id"]
+
+

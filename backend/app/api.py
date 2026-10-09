@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from .database import get_db
-from .maintenance.rules import decision
+from .maintenance.rules import decision, structural_state_for
 from .models import (AuditLog, Evidence, HotspotCalibration, Inspection, MaintenanceEvent, Model3DAsset,
                      Measurement, WorkOrder, WorkOrderStatusHistory)
 from .schemas import (EvidenceOut, HotspotInput, InspectionCreate, InspectionOut,
@@ -173,7 +173,7 @@ def create_inspection(payload: InspectionCreate, db: Session = Depends(get_db)):
         maintenance_event = bool(item.maintenance_event or text_event)
         any_event = any_event or maintenance_event
         raw = item.length_mm
-        state = "N/I" if raw is None else ("Normal" if raw < caution else "Alerta" if raw < danger else "Crítico")
+        state = structural_state_for(raw, caution, danger)
         ratio = None if raw is None else raw / danger
         delta = None
         delta_eff = None
@@ -417,14 +417,14 @@ def models(db:Session=Depends(get_db)):
         "dimensions_source_units":asset.dimensions if asset else {"x":4039.9277,"y":8834.0,"z":2619.9212},
         "is_watertight":asset.is_watertight if asset else False,"is_winding_consistent":asset.is_winding_consistent if asset else True,
         "coordinate_transform":asset.coordinate_transform if asset else "rotate X -90°, center, uniform fit scale",
-        "coordinate_calibration":"provisional mapping from the official SD drawing; unconfirmed until engineering review"}]
+        "coordinate_calibration":"provisional mapping from the official SD drawing; a viewer check records visual placement only and is not engineering certification"}]
 
 
 @router.get("/3d/hotspots")
 def hotspots(db: Session = Depends(get_db)):
     rows = {h.point:h for h in db.scalars(select(HotspotCalibration)).all()}
     return [{"code":p,"description":DESCRIPTIONS[p],"calibration":calibration_out(rows.get(p)),
-             "calibration_status":"CONFIRMED" if rows.get(p) and rows[p].confirmed else "UNVERIFIED" if rows.get(p) else "NOT_CALIBRATED"}
+             "calibration_status":"VISUALLY_CHECKED" if rows.get(p) and rows[p].confirmed else "PROVISIONAL" if rows.get(p) else "NOT_CALIBRATED"}
             for p in POINTS]
 
 
@@ -443,7 +443,7 @@ def put_hotspot(code: str, payload: HotspotInput, db: Session = Depends(get_db))
         details={"position":[payload.x,payload.y,payload.z],"confirmed":payload.confirmed,"model":payload.model_asset}))
     db.commit(); db.refresh(current)
     return {"code":code,"description":DESCRIPTIONS[code],"calibration":calibration_out(current),
-            "calibration_status":"CONFIRMED" if current.confirmed else "UNVERIFIED"}
+            "calibration_status":"VISUALLY_CHECKED" if current.confirmed else "PROVISIONAL"}
 
 
 @router.get("/analytics/overview")
