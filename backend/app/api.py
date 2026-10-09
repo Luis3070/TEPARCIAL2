@@ -417,7 +417,7 @@ def models(db:Session=Depends(get_db)):
         "dimensions_source_units":asset.dimensions if asset else {"x":4039.9277,"y":8834.0,"z":2619.9212},
         "is_watertight":asset.is_watertight if asset else False,"is_winding_consistent":asset.is_winding_consistent if asset else True,
         "coordinate_transform":asset.coordinate_transform if asset else "rotate X -90°, center, uniform fit scale",
-        "coordinate_calibration":"manual, unconfirmed until engineering review"}]
+        "coordinate_calibration":"provisional mapping from the official SD drawing; unconfirmed until engineering review"}]
 
 
 @router.get("/3d/hotspots")

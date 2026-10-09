@@ -9,13 +9,27 @@ import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from ..models import Equipment, Inspection, InspectionPoint, MaintenanceEvent, Measurement, Model3DAsset, StructuralZone
+from ..models import (Equipment, HotspotCalibration, Inspection, InspectionPoint, MaintenanceEvent,
+                      Measurement, Model3DAsset, StructuralZone)
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "outputs"
 POINTS = ("SD-01", "SD-02", "SD-03", "SD-04")
 EQUIPMENT = "EH4-01"
 ZONE = "Tijeras y spindle (suspensión delantera)"
+
+# Provisional source-local coordinates aligned to the official SD inspection sketch.
+# The CAD form is an upper-left view: source Y<0 is the near/left side in the
+# viewer's default camera, while source Y>0 is the far/right side. These remain
+# explicitly unconfirmed so an engineer can correct the point on the STL.
+SD_CAD_HOTSPOTS = {
+    "SD-01": ((1221.548, 1969.732, 521.686), (-0.84631, -0.42315, -0.32358)),  # right scissor base
+    "SD-02": ((1222.074, -1971.842, 517.550), (-0.84630, 0.42315, -0.32359)),  # left scissor base
+    # Shift the provisional spindle anchors farther along the spindle footprint
+    # so their surface patches remain visually distinct from the scissor patches.
+    "SD-03": ((1727.358, 2215.521, 448.000), (0.80902, -0.58779, 0.00000)),   # right spindle base
+    "SD-04": ((1727.358, -2215.521, 448.000), (0.80902, 0.58779, 0.00000)), # left spindle base
+}
 
 
 def source_hash() -> str:
@@ -41,6 +55,18 @@ def ensure_reference_entities(db: Session) -> None:
         if not db.get(InspectionPoint, point):
             db.add(InspectionPoint(code=point, zone_id="EH4-01-SD", description=descriptions[point],
                 caution_mm=float(limits[point]["caution_mm"]), danger_mm=float(limits[point]["danger_mm"])))
+    db.flush()
+    for point, (position, normal) in SD_CAD_HOTSPOTS.items():
+        calibration = db.get(HotspotCalibration, point)
+        if calibration is None:
+            db.add(HotspotCalibration(point=point, x=position[0], y=position[1], z=position[2],
+                nx=normal[0], ny=normal[1], nz=normal[2], calibrated_by="Official SD CAD sketch · provisional",
+                confirmed=False, model_asset="EH4000_front_suspension_V7_final.stl", model_local_coordinates=True))
+        elif (point in {"SD-03", "SD-04"} and not calibration.confirmed
+              and calibration.calibrated_by == "Official SD CAD sketch · provisional"):
+            # Refresh only our original provisional seed; preserve any manual/confirmed calibration.
+            calibration.x, calibration.y, calibration.z = position
+            calibration.nx, calibration.ny, calibration.nz = normal
     model_file=ROOT/"frontend"/"public"/"assets"/"EH4000_front_suspension_V7_final.stl"
     if model_file.exists():
         asset = db.get(Model3DAsset, "front-suspension-v7")

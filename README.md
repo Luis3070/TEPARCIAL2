@@ -40,7 +40,7 @@ Las acciones de mantenimiento sugeridas no se convierten automáticamente en ór
 - `MEASUREMENT_TOLERANCE_MM = 10` se utiliza únicamente para interpretar cambios entre inspecciones. Los estados Normal/Alerta/Crítico usan la longitud RAW y los límites oficiales sin tolerancia.
 - Un cambio entre la última medición válida anterior a N/I y la primera posterior se presenta como cambio a través de intervalo incompleto, con bandera. No es una observación consecutiva ni una tasa ordinaria.
 - No se ejecuta forecasting, ML, imputación, smoothing ni interpolación.
-- El STL suministrado se conserva como malla técnica de una sola pieza. Sus unidades fuente no están documentadas y la malla no es watertight. Los cuatro hotspots requieren calibración humana: sus coordenadas no se inventan ni se consideran verificadas hasta confirmarlas.
+- El STL suministrado se conserva como malla técnica de una sola pieza. Sus unidades fuente no están documentadas y la malla no es watertight. Los cuatro hotspots iniciales se mapearon provisionalmente desde el esquema SD al marco local del STL (tijera y spindle por lado); quedan sin confirmar hasta que un ingeniero revise y, si hace falta, ajuste su ubicación en el visor.
 - El I3D del simulador depende de recursos externos/proprietary y no se presenta como geometría integrada. La aplicación muestra el STL real y el esquema SD del formato de inspección.
 - Referencia visual: `frontend/public/assets/schemes/sd_inspection_reference.png`.
 
