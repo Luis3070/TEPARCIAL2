@@ -1,0 +1,26 @@
+Source and conversion notes
+==========================
+
+Preview asset: hitachi_eh4000_fs25.glb
+Converted from the user-supplied local mod folder:
+  FSM_Hitachi_EH4000_FS25 (supplied from the user's Downloads folder)
+Source files: eh4000Hitachi.i3d, eh4000Hitachi.i3d.shapes, textures/*.dds
+Mod metadata: modDesc.xml lists title "Hitachi EH 4000 AC3", author "FS Miner", version 1.0.0.0.
+Conversion: Blender 5.2.2 LTS with the Blender I3D Importer v0.5.1; static GLB for browser preview.
+
+Limitations and provenance
+--------------------------
+The supplied mod metadata does not state a license. This GLB is included for
+this local project preview because the source files were supplied by the user;
+review the mod's permissions before redistribution or public deployment.
+The source mod files were not modified. Only a temporary copy of the I3D XML
+was adjusted to resolve a bundled DDS texture whose original XML path used a
+JPG extension. The converted model is visual context only, not validated CAD
+or engineering geometry. Continue using the separate front-suspension STL for
+SD inspection locations and condition coloring.
+
+Some shared Farming Simulator $data textures/shaders were not present on this
+machine; the conversion uses fallbacks for those materials (mainly cab glass
+and lights). The mesh geometry and the mod-local DDS textures are embedded in
+the GLB.
+
