@@ -1,0 +1,18 @@
+{
+  "promised_files_missing": [],
+  "plots_missing": [],
+  "csv_record_count_matches": true,
+  "csv_null_count_matches": true,
+  "json_record_count_matches": true,
+  "delta_csv_rows_match": true,
+  "growth_csv_rows_match": true,
+  "delta_csv_columns_present": true,
+  "growth_csv_columns_present": true,
+  "effective_delta_formula_matches": true,
+  "effective_rate_policy_matches": true,
+  "measurement_uncertainty_metadata_matches": true,
+  "html_contains_tolerance_and_reclassification": true,
+  "source_unchanged": true,
+  "null_not_converted_to_zero": true,
+  "plots_saved": true
+}

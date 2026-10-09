@@ -1,0 +1,24 @@
+﻿test,status,detail
+l_raw_unchanged,PASS,L_raw_mm coincide por fecha y punto con los valores QA; sin transformaciones
+null_not_zero,PASS,NULL preservados; no imputados a 0
+official_limits_unchanged,PASS,Caution/Danger coinciden exactamente con qa_summary.json
+structural_state_unchanged,PASS,Estado recomputado desde L_raw_mm y límites oficiales
+severity_ratio_formula,PASS,severity_ratio = L_raw / Danger
+margin_equations,PASS,Márgenes absolutos y porcentuales recalculados sin recortar negativos
+no_trend_crosses_repair,PASS,Tasas RAW y efectivas NaN en intervalos de reinicio
+maintenance_segments_coherent,PASS,Fechas de reparación: ['2025-01-07']
+critical_is_p4,PASS,Críticos=2
+critical_repair_before_operation,PASS,Críticos=2
+ni_reinspection,PASS,N/I=3
+priority_at_most_p4,PASS,Prioridades pertenecen a P0...P4
+zone_priority_is_point_max,PASS,Prioridad de zona igual a prioridad máxima de sus puntos
+worst_point_exists,PASS,Cada worst_point existe en la inspección correspondiente
+zone_completeness_range,PASS,Completitud entre 0 y 100 %
+raw_source_hash_unchanged,PASS,SHA-256 del Excel RAW coincide con el snapshot del QA
+delta_growth_qa_sources_agree,PASS,sd_delta_L.csv y sd_growth_rates.csv coinciden por fecha y punto
+initial_measure_labeled,PASS,Una primera medición válida por punto se identifica INITIAL_MEASURE
+bridged_changes_are_flagged,PASS,Todo cambio a través de NULL queda separado y advertido
+bridges_do_not_replace_consecutive_delta,PASS,El cambio puenteado no reemplaza ΔL ni su clase consecutiva
+bridged_changes_have_no_growth_rate,PASS,No se calcula tasa ordinaria para cambios puenteados
+current_nulls_warned,PASS,NULL actuales conservan advertencia propia y acción de reinspección
+no_target_normal_n_i_undefined,PASS,Inicio de serie y observaciones posteriores a NULL tienen tratamiento explícito

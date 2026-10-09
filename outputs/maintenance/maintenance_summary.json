@@ -1,0 +1,266 @@
+{
+  "source_files": [
+    "sd_inspections_qa.csv",
+    "sd_delta_L.csv",
+    "sd_growth_rates.csv",
+    "qa_maintenance_events.csv",
+    "qa_summary.json"
+  ],
+  "scope": {
+    "equipment": "EH4-01",
+    "zone": "Tijeras y spindle (suspensión delantera)",
+    "points": [
+      "SD-01",
+      "SD-02",
+      "SD-03",
+      "SD-04"
+    ]
+  },
+  "feature_rows": 100,
+  "inspection_dates": 25,
+  "structural_state_counts": {
+    "Normal": 90,
+    "Alerta": 5,
+    "Crítico": 2,
+    "N/I": 3
+  },
+  "initial_measure_count": 4,
+  "gap_spanning_change_count": 3,
+  "gap_spanning_changes": [
+    {
+      "date": "2023-07-17",
+      "point": "SD-03",
+      "bridged_from_date": "2023-05-09",
+      "delta_L_raw": null,
+      "delta_L_bridged_raw": 0.0,
+      "bridge_null_count": 1,
+      "data_warning": "GAP_SPANNING_CHANGE"
+    },
+    {
+      "date": "2023-09-22",
+      "point": "SD-02",
+      "bridged_from_date": "2023-07-17",
+      "delta_L_raw": null,
+      "delta_L_bridged_raw": 0.0,
+      "bridge_null_count": 1,
+      "data_warning": "GAP_SPANNING_CHANGE"
+    },
+    {
+      "date": "2024-02-11",
+      "point": "SD-04",
+      "bridged_from_date": "2023-12-01",
+      "delta_L_raw": null,
+      "delta_L_bridged_raw": 0.0,
+      "bridge_null_count": 1,
+      "data_warning": "GAP_SPANNING_CHANGE"
+    }
+  ],
+  "maintenance_action_counts": {
+    "MONITOR_ROUTINE": 78,
+    "INITIAL_MEASURE": 4,
+    "MONITOR_INTENSIFIED": 4,
+    "POST_REPAIR_VERIFICATION": 4,
+    "REINSPECTION_REQUIRED": 3,
+    "PLAN_REPAIR": 3,
+    "PRIORITIZE_REPAIR": 2,
+    "REPAIR_BEFORE_OPERATION": 2
+  },
+  "maintenance_priority_counts": {
+    "P0": 78,
+    "P1": 11,
+    "P2": 3,
+    "P3": 2,
+    "P4": 2
+  },
+  "zone_state_counts": {
+    "NORMAL": 15,
+    "ALERT": 5,
+    "INCOMPLETE": 3,
+    "CRITICAL": 2
+  },
+  "zone_state_transitions": [
+    {
+      "date": "2023-06-09",
+      "from": "NORMAL",
+      "to": "INCOMPLETE",
+      "responsible_points": [
+        "SD-03"
+      ],
+      "worst_point": "SD-03"
+    },
+    {
+      "date": "2023-07-17",
+      "from": "INCOMPLETE",
+      "to": "NORMAL",
+      "responsible_points": [
+        "SD-03"
+      ],
+      "worst_point": "SD-01"
+    },
+    {
+      "date": "2023-08-23",
+      "from": "NORMAL",
+      "to": "INCOMPLETE",
+      "responsible_points": [
+        "SD-02"
+      ],
+      "worst_point": "SD-02"
+    },
+    {
+      "date": "2023-09-22",
+      "from": "INCOMPLETE",
+      "to": "NORMAL",
+      "responsible_points": [
+        "SD-02"
+      ],
+      "worst_point": "SD-01"
+    },
+    {
+      "date": "2024-01-09",
+      "from": "NORMAL",
+      "to": "INCOMPLETE",
+      "responsible_points": [
+        "SD-04"
+      ],
+      "worst_point": "SD-01"
+    },
+    {
+      "date": "2024-02-11",
+      "from": "INCOMPLETE",
+      "to": "NORMAL",
+      "responsible_points": [
+        "SD-04"
+      ],
+      "worst_point": "SD-01"
+    },
+    {
+      "date": "2024-04-18",
+      "from": "NORMAL",
+      "to": "ALERT",
+      "responsible_points": [
+        "SD-01"
+      ],
+      "worst_point": "SD-01"
+    },
+    {
+      "date": "2024-10-10",
+      "from": "ALERT",
+      "to": "CRITICAL",
+      "responsible_points": [
+        "SD-01"
+      ],
+      "worst_point": "SD-01"
+    },
+    {
+      "date": "2025-01-07",
+      "from": "CRITICAL",
+      "to": "NORMAL",
+      "responsible_points": [
+        "SD-01",
+        "SD-02",
+        "SD-03",
+        "SD-04"
+      ],
+      "worst_point": "SD-01"
+    }
+  ],
+  "priority_action_dates": [
+    {
+      "date": "2024-04-18",
+      "maintenance_priority": "P3",
+      "maintenance_action": "PRIORITIZE_REPAIR",
+      "point": [
+        "SD-01"
+      ]
+    },
+    {
+      "date": "2024-05-19",
+      "maintenance_priority": "P2",
+      "maintenance_action": "PLAN_REPAIR",
+      "point": [
+        "SD-01"
+      ]
+    },
+    {
+      "date": "2024-06-25",
+      "maintenance_priority": "P2",
+      "maintenance_action": "PLAN_REPAIR",
+      "point": [
+        "SD-01"
+      ]
+    },
+    {
+      "date": "2024-08-01",
+      "maintenance_priority": "P3",
+      "maintenance_action": "PRIORITIZE_REPAIR",
+      "point": [
+        "SD-01"
+      ]
+    },
+    {
+      "date": "2024-09-07",
+      "maintenance_priority": "P2",
+      "maintenance_action": "PLAN_REPAIR",
+      "point": [
+        "SD-01"
+      ]
+    },
+    {
+      "date": "2024-10-10",
+      "maintenance_priority": "P4",
+      "maintenance_action": "REPAIR_BEFORE_OPERATION",
+      "point": [
+        "SD-01"
+      ]
+    },
+    {
+      "date": "2024-11-15",
+      "maintenance_priority": "P4",
+      "maintenance_action": "REPAIR_BEFORE_OPERATION",
+      "point": [
+        "SD-01"
+      ]
+    }
+  ],
+  "repair_dates": [
+    "2025-01-07"
+  ],
+  "latest_condition": {
+    "date": "2025-05-14",
+    "hours": 55030.7,
+    "zone_state": "NORMAL",
+    "worst_point": "SD-01",
+    "max_severity_ratio": 0.0,
+    "normal_count": 4,
+    "alert_count": 0,
+    "critical_count": 0,
+    "not_inspected_count": 0,
+    "significant_growth_count": 0,
+    "highest_priority": "P0",
+    "recommended_action": "MONITOR_ROUTINE",
+    "maintenance_event": false,
+    "data_completeness_pct": 100.0,
+    "priority_tie": true,
+    "priority_tie_note": "4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente."
+  },
+  "decision_precedence": [
+    "Crítico/P4",
+    "Alerta/P2-P3",
+    "N/I/P1",
+    "primera inspección post reparación/P1",
+    "INITIAL_MEASURE sin prioridad",
+    "Normal + reglas de cambio",
+    "cambio puenteado mostrado con advertencia sin escalar prioridad"
+  ],
+  "explicit_rule_gaps": {
+    "post_repair_priority_and_mode": "No definidos por la solicitud; se asignó P1/INSPECTION para que la verificación obligatoria sea programable.",
+    "normal_significant_decrease": "No definida por reglas V1; RULE_NOT_DEFINED se conserva para combinaciones aún no cubiertas.",
+    "gap_spanning_change": "Se muestra el cambio entre última medición válida pre-NULL y primera post-NULL con GAP_SPANNING_CHANGE. No sustituye delta_L_raw, no calcula tasa y no modifica prioridad.",
+    "initial_measure": "Primera medición válida por punto, etiquetada INITIAL_MEASURE sin delta ni prioridad asignada.",
+    "zone_incomplete": "Se usa INCOMPLETE cuando hay al menos un N/I y los puntos medidos no tienen Alerta/Crítico; así N/I nunca hace que la zona aparezca NORMAL.",
+    "zone_tie": "Entre puntos con prioridad máxima se selecciona mayor severity_ratio; empate residual por código ascendente."
+  },
+  "decision_gaps": [],
+  "tests_pass": 23,
+  "tests_fail": 0
+}

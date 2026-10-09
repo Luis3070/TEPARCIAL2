@@ -1,0 +1,452 @@
+<!doctype html><html lang='es'><head><meta charset='utf-8'><title>QA EH4000 SD</title><style>body{font:15px Arial,sans-serif;max-width:1250px;margin:2rem auto;padding:0 1rem;color:#222}h1,h2{color:#18324b}table{border-collapse:collapse;margin:.7rem 0 1.5rem;width:100%;font-size:13px}td,th{border:1px solid #ccc;padding:6px;text-align:left}th{background:#eef2f5}.status{padding:1rem;background:#fff2cc;border-left:5px solid #d18b00}.plots{display:grid;grid-template-columns:1fr 1fr;gap:1rem}figure{margin:0;border:1px solid #ddd;padding:.5rem}img{width:100%;height:auto}figcaption{font-size:12px;color:#555}pre{white-space:pre-wrap}</style></head><body>
+    <h1>Auditoría QA: EH4000, tijeras y spindle</h1><p>Alcance: EH4-01, SD-01 a SD-04. Fuente: EH4000_historial_grietas.xlsx. RAW no modificado; 0 mm se conserva distinto de NULL.</p>
+    <div class='status'><b>Clasificación: APTO CON OBSERVACIONES</b><br>Periodo 2023-01-16 – 2025-05-14; 25 inspecciones, 100/100 filas, completitud de medición 97.00%.</div>
+    <h2>Resumen ejecutivo</h2><p>Se encontraron 3 mediciones NULL, 0 filas duplicadas según (Fecha, Equipo, Código), 0 decrementos del horómetro y 4 filas de evento documental, agrupadas en 1 fecha(s). La anotación del 2025-01-07 identifica una reparación general; se excluyen de velocidad los intervalos que tocan el evento.</p>
+    <h2>Tolerancia operacional</h2><p>MEASUREMENT_TOLERANCE_MM = 10 mm; aplica únicamente a cambios entre inspecciones. structural_state se calcula con L RAW y límites oficiales, sin tolerancia.</p><p>Conteos change_class: {'STABLE_WITHIN_TOLERANCE': 79, 'SIGNIFICANT_GROWTH': 7, 'SIGNIFICANT_DECREASE_REVIEW': 0, 'MAINTENANCE_RESET': 4, 'N_I': 10}.</p><h3>Anomalías previas reclasificadas</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>fecha</th>
+      <th>codigo</th>
+      <th>delta_L_raw</th>
+      <th>previous_classification</th>
+      <th>new_classification</th>
+      <th>delta_L_effective</th>
+      <th>fila_excel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2024-05-19</td>
+      <td>SD-01</td>
+      <td>-10.0</td>
+      <td>WARNING_DECREMENT_REVIEW</td>
+      <td>STABLE_WITHIN_TOLERANCE</td>
+      <td>0.0</td>
+      <td>178</td>
+    </tr>
+  </tbody>
+</table>
+    <h2>Metadata</h2><p>Hojas: Léame, Historial, Puntos. Columnas Historial: Fecha, Equipo, Horas (h), Inspector, Zona, Código, Descripción, L actual (mm), Comentario, Imagen. Columna de imagen presente: sí; imágenes embebidas no se usan para inferir mediciones.</p>
+    <h2>Tests estructurales</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>test</th>
+      <th>status</th>
+      <th>detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>hojas_requeridas</td>
+      <td>PASS</td>
+      <td>Hojas: ['Léame', 'Historial', 'Puntos']</td>
+    </tr>
+    <tr>
+      <td>columnas_historial</td>
+      <td>PASS</td>
+      <td>Ausentes: []</td>
+    </tr>
+    <tr>
+      <td>columnas_puntos</td>
+      <td>PASS</td>
+      <td>Ausentes: []</td>
+    </tr>
+    <tr>
+      <td>fechas_parseables</td>
+      <td>PASS</td>
+      <td>No parseables: 0</td>
+    </tr>
+    <tr>
+      <td>horas_numericas</td>
+      <td>PASS</td>
+      <td>No numéricas: 0</td>
+    </tr>
+    <tr>
+      <td>medicion_numerica_o_null</td>
+      <td>PASS</td>
+      <td>NULL preservados: 3</td>
+    </tr>
+    <tr>
+      <td>codigos_solo_SD01_SD04</td>
+      <td>PASS</td>
+      <td>Códigos: ['SD-01', 'SD-02', 'SD-03', 'SD-04']</td>
+    </tr>
+    <tr>
+      <td>equipo_consistente</td>
+      <td>PASS</td>
+      <td>Candidatos SD fuera de equipo: 0</td>
+    </tr>
+    <tr>
+      <td>zona_consistente</td>
+      <td>PASS</td>
+      <td>Candidatos SD fuera de zona: 0</td>
+    </tr>
+    <tr>
+      <td>descripciones_consistentes_con_catalogo</td>
+      <td>PASS</td>
+      <td>Comparación con hoja Puntos</td>
+    </tr>
+    <tr>
+      <td>limites_caution_menor_danger</td>
+      <td>PASS</td>
+      <td>Leídos de hoja Puntos</td>
+    </tr>
+    <tr>
+      <td>duplicados_fecha_equipo_codigo</td>
+      <td>PASS</td>
+      <td>Filas duplicadas: 0</td>
+    </tr>
+    <tr>
+      <td>cuatro_filas_por_inspeccion</td>
+      <td>PASS</td>
+      <td>Fechas con recuento distinto a 4: 0</td>
+    </tr>
+    <tr>
+      <td>cuatro_puntos_por_fecha</td>
+      <td>PASS</td>
+      <td>Fechas con distinto número de códigos: 0</td>
+    </tr>
+    <tr>
+      <td>horas_consistentes_en_fecha</td>
+      <td>PASS</td>
+      <td>Fechas inconsistentes: 0</td>
+    </tr>
+    <tr>
+      <td>inspector_consistente_en_fecha</td>
+      <td>PASS</td>
+      <td>Fechas inconsistentes: 0</td>
+    </tr>
+    <tr>
+      <td>imagen_consistente_en_fecha</td>
+      <td>PASS</td>
+      <td>Fechas inconsistentes: 0</td>
+    </tr>
+    <tr>
+      <td>referencias_imagen_resolubles</td>
+      <td>WARNING</td>
+      <td>Referencias sin archivo externo en DATOSCRUDOS: ['EH4_SD_tijeras_spindle.png']</td>
+    </tr>
+    <tr>
+      <td>fechas_no_nulas</td>
+      <td>PASS</td>
+      <td>Fecha de inspección parseada</td>
+    </tr>
+    <tr>
+      <td>horometro_no_nulo_por_fecha</td>
+      <td>PASS</td>
+      <td>Horómetro deduplicado por fecha</td>
+    </tr>
+    <tr>
+      <td>structural_state_uses_raw_and_official_limits</td>
+      <td>PASS</td>
+      <td>Estado validado exclusivamente con L RAW y umbrales oficiales; tolerancia no aplicada</td>
+    </tr>
+    <tr>
+      <td>delta_effective_applies_tolerance_only</td>
+      <td>PASS</td>
+      <td>Tolerancia operacional ±10 mm</td>
+    </tr>
+    <tr>
+      <td>growth_rates_follow_class_policy</td>
+      <td>PASS</td>
+      <td>Tasa RAW conservada; efectiva respeta NULL, mantenimiento y tolerancia</td>
+    </tr>
+    <tr>
+      <td>change_class_partition</td>
+      <td>PASS</td>
+      <td>Clases: {'STABLE_WITHIN_TOLERANCE': 79, 'SIGNIFICANT_GROWTH': 7, 'SIGNIFICANT_DECREASE_REVIEW': 0, 'MAINTENANCE_RESET': 4, 'N_I': 10}</td>
+    </tr>
+  </tbody>
+</table><h2>Estadísticas temporales</h2><h3>Δdías</h3><table><tbody><tr><th>n</th><td>24</td></tr><tr><th>media</th><td>35.38</td></tr><tr><th>mediana</th><td>35.00</td></tr><tr><th>desv. estándar</th><td>4.98</td></tr><tr><th>mínimo</th><td>30.00</td></tr><tr><th>máximo</th><td>53.00</td></tr><tr><th>Q1</th><td>31.75</td></tr><tr><th>Q3</th><td>37.25</td></tr><tr><th>IQR</th><td>5.50</td></tr><tr><th>MAD</th><td>3.00</td></tr><tr><th>CV</th><td>0.14</td></tr></tbody></table><h3>Δhoras</h3><table><tbody><tr><th>n</th><td>24</td></tr><tr><th>media</th><td>574.78</td></tr><tr><th>mediana</th><td>566.45</td></tr><tr><th>desv. estándar</th><td>72.72</td></tr><tr><th>mínimo</th><td>457.60</td></tr><tr><th>máximo</th><td>721.70</td></tr><tr><th>Q1</th><td>518.90</td></tr><tr><th>Q3</th><td>644.80</td></tr><tr><th>IQR</th><td>125.90</td></tr><tr><th>MAD</th><td>63.80</td></tr><tr><th>CV</th><td>0.13</td></tr></tbody></table><p>Cercas robustas IQR: días [23.50, 45.50]; horas [330.05, 833.65]. Detección descriptiva, no dictamen de error.</p>
+    <h2>Estadísticas por punto</h2><table><thead><tr><th>Punto</th><th>Caution</th><th>Danger</th><th>Máximo</th><th>Fecha máximo</th><th>Primera &gt;0</th><th>Primera alerta</th><th>Primera crítica</th><th>Normal</th><th>Alerta</th><th>Crítico</th><th>N/I</th></tr></thead><tbody><tr><td>SD-01</td><td>140</td><td>200</td><td>200.00</td><td>2024-10-10 00:00:00</td><td>2023-05-09 00:00:00</td><td>2024-04-18 00:00:00</td><td>2024-10-10 00:00:00</td><td>18</td><td>5</td><td>2</td><td>0</td></tr><tr><td>SD-02</td><td>140</td><td>200</td><td>90.00</td><td>2024-11-15 00:00:00</td><td>2023-10-30 00:00:00</td><td>N/D</td><td>N/D</td><td>24</td><td>0</td><td>0</td><td>1</td></tr><tr><td>SD-03</td><td>35</td><td>50</td><td>25.00</td><td>2024-10-10 00:00:00</td><td>2024-04-18 00:00:00</td><td>N/D</td><td>N/D</td><td>24</td><td>0</td><td>0</td><td>1</td></tr><tr><td>SD-04</td><td>35</td><td>50</td><td>0.00</td><td>2023-01-16 00:00:00</td><td>N/D</td><td>N/D</td><td>N/D</td><td>24</td><td>0</td><td>0</td><td>1</td></tr></tbody></table>
+    <h2>Valores faltantes</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Fecha</th>
+      <th>Equipo</th>
+      <th>Horas (h)</th>
+      <th>Inspector</th>
+      <th>Código</th>
+      <th>Zona</th>
+      <th>Descripción</th>
+      <th>L actual (mm)</th>
+      <th>Comentario</th>
+      <th>Imagen</th>
+      <th>fila_excel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2023-06-09</td>
+      <td>EH4-01</td>
+      <td>43626.8</td>
+      <td>INSP-03</td>
+      <td>SD-03</td>
+      <td>Tijeras y spindle (suspensión delantera)</td>
+      <td>Metal base de spindle, lado derecho</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>EH4_SD_tijeras_spindle.png</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <td>2023-08-23</td>
+      <td>EH4-01</td>
+      <td>44940.0</td>
+      <td>INSP-01</td>
+      <td>SD-02</td>
+      <td>Tijeras y spindle (suspensión delantera)</td>
+      <td>Metal base de tijeras, lado izquierdo</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>EH4_SD_tijeras_spindle.png</td>
+      <td>83</td>
+    </tr>
+    <tr>
+      <td>2024-01-09</td>
+      <td>EH4-01</td>
+      <td>47308.1</td>
+      <td>INSP-03</td>
+      <td>SD-04</td>
+      <td>Tijeras y spindle (suspensión delantera)</td>
+      <td>Metal base de spindle, lado izquierdo</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>EH4_SD_tijeras_spindle.png</td>
+      <td>133</td>
+    </tr>
+  </tbody>
+</table><h2>Anomalías y hallazgos</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>severity</th>
+      <th>fecha</th>
+      <th>codigo</th>
+      <th>campo</th>
+      <th>valor_observado</th>
+      <th>valor_anterior</th>
+      <th>explicacion</th>
+      <th>posible_causa</th>
+      <th>accion_sugerida</th>
+      <th>fila_excel</th>
+      <th>change_class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>INFO</td>
+      <td>2023-06-09</td>
+      <td>SD-03</td>
+      <td>L actual (mm)</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>Medición vacía preservada como N/I; no equivale a 0 mm.</td>
+      <td>Punto no inspeccionado o medición no disponible</td>
+      <td>Confirmar motivo de ausencia</td>
+      <td>60.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>INFO</td>
+      <td>2023-08-23</td>
+      <td>SD-02</td>
+      <td>L actual (mm)</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>Medición vacía preservada como N/I; no equivale a 0 mm.</td>
+      <td>Punto no inspeccionado o medición no disponible</td>
+      <td>Confirmar motivo de ausencia</td>
+      <td>83.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>INFO</td>
+      <td>2024-01-09</td>
+      <td>SD-04</td>
+      <td>L actual (mm)</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>Medición vacía preservada como N/I; no equivale a 0 mm.</td>
+      <td>Punto no inspeccionado o medición no disponible</td>
+      <td>Confirmar motivo de ausencia</td>
+      <td>133.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>MAINTENANCE_EVENT</td>
+      <td>2025-01-07</td>
+      <td>SD-01</td>
+      <td>Comentario</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>NaN</td>
+      <td>Comentario documental que indica intervención/reparación general de chasis.</td>
+      <td>Reparación general documentada</td>
+      <td>Confirmar alcance y puntos intervenidos; segmentar serie</td>
+      <td>250.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>MAINTENANCE_EVENT</td>
+      <td>2025-01-07</td>
+      <td>SD-02</td>
+      <td>Comentario</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>NaN</td>
+      <td>Comentario documental que indica intervención/reparación general de chasis.</td>
+      <td>Reparación general documentada</td>
+      <td>Confirmar alcance y puntos intervenidos; segmentar serie</td>
+      <td>251.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>MAINTENANCE_EVENT</td>
+      <td>2025-01-07</td>
+      <td>SD-03</td>
+      <td>Comentario</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>NaN</td>
+      <td>Comentario documental que indica intervención/reparación general de chasis.</td>
+      <td>Reparación general documentada</td>
+      <td>Confirmar alcance y puntos intervenidos; segmentar serie</td>
+      <td>252.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>MAINTENANCE_EVENT</td>
+      <td>2025-01-07</td>
+      <td>SD-04</td>
+      <td>Comentario</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>NaN</td>
+      <td>Comentario documental que indica intervención/reparación general de chasis.</td>
+      <td>Reparación general documentada</td>
+      <td>Confirmar alcance y puntos intervenidos; segmentar serie</td>
+      <td>253.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>WARNING</td>
+      <td>2023-01-16</td>
+      <td>SD-01</td>
+      <td>Imagen</td>
+      <td>EH4_SD_tijeras_spindle.png</td>
+      <td>NaN</td>
+      <td>El metadato referencia una imagen que no está disponible junto al Excel; no hay imagen incrustada para verificar.</td>
+      <td>Paquete de evidencias incompleto o ruta externa no incluida</td>
+      <td>Solicitar la imagen original y verificar correspondencia con el punto</td>
+      <td>10.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>WARNING</td>
+      <td>2025-01-07</td>
+      <td></td>
+      <td>delta_dias</td>
+      <td>53.0</td>
+      <td>NaN</td>
+      <td>Intervalo fuera de cercas IQR 1.5; es atípico estadístico, no prueba de error.</td>
+      <td>Cadencia irregular o registro omitido</td>
+      <td>Revisar calendario de inspecciones</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>INFO</td>
+      <td>2024-05-19</td>
+      <td>SD-01</td>
+      <td>L actual (mm)</td>
+      <td>140.0</td>
+      <td>150.0</td>
+      <td>El descenso RAW de -10 mm queda dentro de ±10 mm y se reclasifica como estable operacional.</td>
+      <td>Variación dentro de tolerancia operacional adoptada</td>
+      <td>Conservar RAW; usar delta efectivo cero para análisis de cambio</td>
+      <td>178.0</td>
+      <td>STABLE_WITHIN_TOLERANCE</td>
+    </tr>
+  </tbody>
+</table><h2>Eventos de mantenimiento</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Fecha</th>
+      <th>horas</th>
+      <th>punto</th>
+      <th>Comentario</th>
+      <th>tipo_inferido</th>
+      <th>confianza</th>
+      <th>fila_excel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2025-01-07</td>
+      <td>53029.1</td>
+      <td>SD-01</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>reparación general</td>
+      <td>alta</td>
+      <td>250</td>
+    </tr>
+    <tr>
+      <td>2025-01-07</td>
+      <td>53029.1</td>
+      <td>SD-02</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>reparación general</td>
+      <td>alta</td>
+      <td>251</td>
+    </tr>
+    <tr>
+      <td>2025-01-07</td>
+      <td>53029.1</td>
+      <td>SD-03</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>reparación general</td>
+      <td>alta</td>
+      <td>252</td>
+    </tr>
+    <tr>
+      <td>2025-01-07</td>
+      <td>53029.1</td>
+      <td>SD-04</td>
+      <td>Equipo sale de reparación general de chasis</td>
+      <td>reparación general</td>
+      <td>alta</td>
+      <td>253</td>
+    </tr>
+  </tbody>
+</table><h2>Inspector por completitud</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Inspector</th>
+      <th>records</th>
+      <th>measured</th>
+      <th>nulls</th>
+      <th>completeness_pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>INSP-01</td>
+      <td>32</td>
+      <td>31</td>
+      <td>1</td>
+      <td>96.875</td>
+    </tr>
+    <tr>
+      <td>INSP-02</td>
+      <td>28</td>
+      <td>28</td>
+      <td>0</td>
+      <td>100.000</td>
+    </tr>
+    <tr>
+      <td>INSP-03</td>
+      <td>40</td>
+      <td>38</td>
+      <td>2</td>
+      <td>95.000</td>
+    </tr>
+  </tbody>
+</table><p>La secuencia por inspector es descriptiva. Con 25 fechas y rotación temporal, estos datos no permiten separar estadísticamente el efecto del inspector del efecto temporal ni afirmar causalidad.</p>
+    <h2>Visualizaciones QA</h2><div class='plots'><figure><img src='plots/01_SD01_vs_fecha.png' alt='01_SD01_vs_fecha'><figcaption>01_SD01_vs_fecha.png</figcaption></figure><figure><img src='plots/02_SD02_vs_fecha.png' alt='02_SD02_vs_fecha'><figcaption>02_SD02_vs_fecha.png</figcaption></figure><figure><img src='plots/03_SD03_vs_fecha.png' alt='03_SD03_vs_fecha'><figcaption>03_SD03_vs_fecha.png</figcaption></figure><figure><img src='plots/04_SD04_vs_fecha.png' alt='04_SD04_vs_fecha'><figcaption>04_SD04_vs_fecha.png</figcaption></figure><figure><img src='plots/05_SD01_vs_horas.png' alt='05_SD01_vs_horas'><figcaption>05_SD01_vs_horas.png</figcaption></figure><figure><img src='plots/06_SD02_vs_horas.png' alt='06_SD02_vs_horas'><figcaption>06_SD02_vs_horas.png</figcaption></figure><figure><img src='plots/07_SD03_vs_horas.png' alt='07_SD03_vs_horas'><figcaption>07_SD03_vs_horas.png</figcaption></figure><figure><img src='plots/08_SD04_vs_horas.png' alt='08_SD04_vs_horas'><figcaption>08_SD04_vs_horas.png</figcaption></figure><figure><img src='plots/09_comparacion_global.png' alt='09_comparacion_global'><figcaption>09_comparacion_global.png</figcaption></figure><figure><img src='plots/09_severity_normalizada.png' alt='09_severity_normalizada'><figcaption>09_severity_normalizada.png</figcaption></figure><figure><img src='plots/10_intervalo_dias.png' alt='10_intervalo_dias'><figcaption>10_intervalo_dias.png</figcaption></figure><figure><img src='plots/11_intervalo_horas.png' alt='11_intervalo_horas'><figcaption>11_intervalo_horas.png</figcaption></figure><figure><img src='plots/12_horometro_vs_fecha.png' alt='12_horometro_vs_fecha'><figcaption>12_horometro_vs_fecha.png</figcaption></figure><figure><img src='plots/13_delta_L.png' alt='13_delta_L'><figcaption>13_delta_L.png</figcaption></figure><figure><img src='plots/14_growth_rate.png' alt='14_growth_rate'><figcaption>14_growth_rate.png</figcaption></figure><figure><img src='plots/15_missingness_matrix.png' alt='15_missingness_matrix'><figcaption>15_missingness_matrix.png</figcaption></figure><figure><img src='plots/16_inspectores_timeline.png' alt='16_inspectores_timeline'><figcaption>16_inspectores_timeline.png</figcaption></figure><figure><img src='plots/17_inspecciones_por_inspector.png' alt='17_inspecciones_por_inspector'><figcaption>17_inspecciones_por_inspector.png</figcaption></figure><figure><img src='plots/18_SD01_validacion_estados.png' alt='18_SD01_validacion_estados'><figcaption>18_SD01_validacion_estados.png</figcaption></figure><figure><img src='plots/18_SD02_validacion_estados.png' alt='18_SD02_validacion_estados'><figcaption>18_SD02_validacion_estados.png</figcaption></figure><figure><img src='plots/18_SD03_validacion_estados.png' alt='18_SD03_validacion_estados'><figcaption>18_SD03_validacion_estados.png</figcaption></figure><figure><img src='plots/18_SD04_validacion_estados.png' alt='18_SD04_validacion_estados'><figcaption>18_SD04_validacion_estados.png</figcaption></figure></div><h2>Conclusiones científicas</h2><h3>Hechos observados</h3><ul><li>El libro cubre 2023-01-16 a 2025-05-14 en el alcance SD.</li><li>Se encontraron 3 celdas de medición NULL; se conservaron como N/I.</li><li>Se registró una anotación de reparación general de chasis el 2025-01-07.</li></ul><h3>Anomalías detectadas</h3><ul><li>INFO: Medición vacía preservada como N/I; no equivale a 0 mm. (fila Excel 60)</li><li>INFO: Medición vacía preservada como N/I; no equivale a 0 mm. (fila Excel 83)</li><li>INFO: Medición vacía preservada como N/I; no equivale a 0 mm. (fila Excel 133)</li><li>MAINTENANCE_EVENT: Comentario documental que indica intervención/reparación general de chasis. (fila Excel 250)</li><li>MAINTENANCE_EVENT: Comentario documental que indica intervención/reparación general de chasis. (fila Excel 251)</li><li>MAINTENANCE_EVENT: Comentario documental que indica intervención/reparación general de chasis. (fila Excel 252)</li><li>MAINTENANCE_EVENT: Comentario documental que indica intervención/reparación general de chasis. (fila Excel 253)</li><li>WARNING: El metadato referencia una imagen que no está disponible junto al Excel; no hay imagen incrustada para verificar. (fila Excel 10)</li><li>WARNING: Intervalo fuera de cercas IQR 1.5; es atípico estadístico, no prueba de error. (fila Excel None)</li><li>INFO: El descenso RAW de -10 mm queda dentro de ±10 mm y se reclasifica como estable operacional. (fila Excel 178)</li></ul><h3>Hipótesis</h3><ul><li>Decrementos previos al evento pueden reflejar incertidumbre de medición, variación física o una intervención no anotada.</li><li>Las diferencias entre inspectores son descriptivas; el calendario y la identidad del inspector están asociados y no permiten inferencia causal.</li></ul><h3>Decisiones pendientes</h3><ul><li>¿La reparación general del 2025-01-07 intervino los cuatro puntos SD y hubo remoción/reemplazo de material?</li><li>¿Cuál fue el motivo de los tres registros vacíos?</li><li>¿Las mediciones con decremento se pueden contrastar con fotografías o protocolo de medición?</li><li>¿Qué tolerancia de medición y resolución aplicó cada inspector?</li></ul>
+    </body></html>

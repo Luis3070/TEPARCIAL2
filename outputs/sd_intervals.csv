@@ -1,0 +1,26 @@
+﻿Fecha,Horas (h),Inspector,Imagen,delta_dias,delta_horas,fecha_duplicada,horometro_decreciente,horas_duplicadas,gap_dias_atipico,gap_horas_atipico
+2023-01-16,41236.0,INSP-01,EH4_SD_tijeras_spindle.png,,,False,False,False,False,False
+2023-02-18,41767.7,INSP-02,EH4_SD_tijeras_spindle.png,33.0,531.6999999999971,False,False,False,False,False
+2023-03-31,42489.4,INSP-03,EH4_SD_tijeras_spindle.png,41.0,721.7000000000044,False,False,False,False,False
+2023-05-09,43139.3,INSP-01,EH4_SD_tijeras_spindle.png,39.0,649.9000000000015,False,False,False,False,False
+2023-06-09,43626.8,INSP-03,EH4_SD_tijeras_spindle.png,31.0,487.5,False,False,False,False,False
+2023-07-17,44280.2,INSP-03,EH4_SD_tijeras_spindle.png,38.0,653.3999999999942,False,False,False,False,False
+2023-08-23,44940.0,INSP-01,EH4_SD_tijeras_spindle.png,37.0,659.8000000000029,False,False,False,False,False
+2023-09-22,45436.5,INSP-02,EH4_SD_tijeras_spindle.png,30.0,496.5,False,False,False,False,False
+2023-10-30,46091.8,INSP-03,EH4_SD_tijeras_spindle.png,38.0,655.3000000000029,False,False,False,False,False
+2023-12-01,46646.6,INSP-02,EH4_SD_tijeras_spindle.png,32.0,554.7999999999956,False,False,False,False,False
+2024-01-09,47308.1,INSP-03,EH4_SD_tijeras_spindle.png,39.0,661.5,False,False,False,False,False
+2024-02-11,47870.3,INSP-03,EH4_SD_tijeras_spindle.png,33.0,562.2000000000044,False,False,False,False,False
+2024-03-13,48382.9,INSP-02,EH4_SD_tijeras_spindle.png,31.0,512.5999999999985,False,False,False,False,False
+2024-04-18,48953.6,INSP-01,EH4_SD_tijeras_spindle.png,36.0,570.6999999999971,False,False,False,False,False
+2024-05-19,49494.2,INSP-03,EH4_SD_tijeras_spindle.png,31.0,540.5999999999985,False,False,False,False,False
+2024-06-25,50076.5,INSP-02,EH4_SD_tijeras_spindle.png,37.0,582.3000000000029,False,False,False,False,False
+2024-08-01,50686.6,INSP-01,EH4_SD_tijeras_spindle.png,37.0,610.0999999999985,False,False,False,False,False
+2024-09-07,51310.7,INSP-03,EH4_SD_tijeras_spindle.png,37.0,624.0999999999985,False,False,False,False,False
+2024-10-10,51906.1,INSP-01,EH4_SD_tijeras_spindle.png,33.0,595.4000000000015,False,False,False,False,False
+2024-11-15,52549.2,INSP-03,EH4_SD_tijeras_spindle.png,36.0,643.0999999999985,False,False,False,False,False
+2025-01-07,53029.1,INSP-03,EH4_SD_tijeras_spindle.png,53.0,479.90000000000146,False,False,False,True,False
+2025-02-06,53486.7,INSP-02,EH4_SD_tijeras_spindle.png,30.0,457.59999999999854,False,False,False,False,False
+2025-03-12,54039.0,INSP-01,EH4_SD_tijeras_spindle.png,34.0,552.3000000000029,False,False,False,False,False
+2025-04-12,54509.7,INSP-01,EH4_SD_tijeras_spindle.png,31.0,470.6999999999971,False,False,False,False,False
+2025-05-14,55030.7,INSP-02,EH4_SD_tijeras_spindle.png,32.0,521.0,False,False,False,False,False

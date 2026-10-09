@@ -1,0 +1,354 @@
+{
+  "source_file": "DATOSCRUDOS\\EH4000_historial_grietas.xlsx",
+  "source_sha256": "ba3775eb4ebf96cee84529bf74d1fe1e7ed6266c43370d355e1b71e1516c6a72",
+  "scope": {
+    "equipment": "EH4-01",
+    "zone": "Tijeras y spindle (suspensión delantera)",
+    "points": [
+      "SD-01",
+      "SD-02",
+      "SD-03",
+      "SD-04"
+    ]
+  },
+  "workbook": {
+    "sheet_names": [
+      "Léame",
+      "Historial",
+      "Puntos"
+    ],
+    "columns_historial": [
+      "Fecha",
+      "Equipo",
+      "Horas (h)",
+      "Inspector",
+      "Zona",
+      "Código",
+      "Descripción",
+      "L actual (mm)",
+      "Comentario",
+      "Imagen"
+    ],
+    "columns_puntos": [
+      "Código",
+      "Zona",
+      "Descripción",
+      "Caution (mm)",
+      "Danger (mm)",
+      "Esquema"
+    ]
+  },
+  "dataset": {
+    "period_start": "2023-01-16",
+    "period_end": "2025-05-14",
+    "inspections": 25,
+    "inspectors": 3,
+    "expected_records": 100,
+    "existing_records": 100,
+    "numeric_measurements": 97,
+    "null_measurements": 3,
+    "completeness_pct": 97.0,
+    "by_point": {
+      "SD-01": {
+        "available": 25,
+        "null": 0,
+        "completeness_pct": 100.0
+      },
+      "SD-02": {
+        "available": 24,
+        "null": 1,
+        "completeness_pct": 96.0
+      },
+      "SD-03": {
+        "available": 24,
+        "null": 1,
+        "completeness_pct": 96.0
+      },
+      "SD-04": {
+        "available": 24,
+        "null": 1,
+        "completeness_pct": 96.0
+      }
+    },
+    "by_inspector": [
+      {
+        "Inspector": "INSP-01",
+        "records": 32,
+        "measured": 31,
+        "nulls": 1,
+        "completeness_pct": 96.875
+      },
+      {
+        "Inspector": "INSP-02",
+        "records": 28,
+        "measured": 28,
+        "nulls": 0,
+        "completeness_pct": 100.0
+      },
+      {
+        "Inspector": "INSP-03",
+        "records": 40,
+        "measured": 38,
+        "nulls": 2,
+        "completeness_pct": 95.0
+      }
+    ],
+    "missing_dates": [
+      "2023-06-09",
+      "2023-08-23",
+      "2024-01-09"
+    ],
+    "state_counts": {
+      "Normal": 90,
+      "Alerta": 5,
+      "Crítico": 2,
+      "N/I": 3
+    }
+  },
+  "temporal": {
+    "delta_dias": {
+      "n": 24,
+      "mean": 35.375,
+      "median": 35.0,
+      "std": 4.976575564364123,
+      "min": 30.0,
+      "max": 53.0,
+      "q1": 31.75,
+      "q3": 37.25,
+      "iqr": 5.5,
+      "mad": 3.0,
+      "cv": 0.14068058132478087
+    },
+    "delta_horas": {
+      "n": 24,
+      "mean": 574.7791666666666,
+      "median": 566.4500000000007,
+      "std": 72.72490739627796,
+      "min": 457.59999999999854,
+      "max": 721.7000000000044,
+      "q1": 518.8999999999996,
+      "q3": 644.7999999999993,
+      "iqr": 125.89999999999964,
+      "mad": 63.79999999999927,
+      "cv": 0.12652669340476205
+    },
+    "robust_iqr_bounds": {
+      "delta_dias": [
+        23.5,
+        45.5
+      ],
+      "delta_horas": [
+        330.0500000000002,
+        833.6499999999987
+      ]
+    },
+    "outlier_dates": {
+      "delta_dias": [
+        "2025-01-07"
+      ],
+      "delta_horas": []
+    }
+  },
+  "points": {
+    "SD-01": {
+      "caution_mm": 140,
+      "danger_mm": 200,
+      "caution_ratio": 0.7,
+      "n_observations": 25,
+      "n_numeric": 25,
+      "n_null": 0,
+      "min_mm": 0.0,
+      "max_mm": 200.0,
+      "mean_mm": 79.6,
+      "median_mm": 70.0,
+      "max_date": "2024-10-10",
+      "first_positive": "2023-05-09",
+      "first_alert": "2024-04-18",
+      "first_critical": "2024-10-10",
+      "states": {
+        "Normal": 18,
+        "Alerta": 5,
+        "Crítico": 2,
+        "N/I": 0
+      }
+    },
+    "SD-02": {
+      "caution_mm": 140,
+      "danger_mm": 200,
+      "caution_ratio": 0.7,
+      "n_observations": 25,
+      "n_numeric": 24,
+      "n_null": 1,
+      "min_mm": 0.0,
+      "max_mm": 90.0,
+      "mean_mm": 29.166666666666668,
+      "median_mm": 15.0,
+      "max_date": "2024-11-15",
+      "first_positive": "2023-10-30",
+      "first_alert": null,
+      "first_critical": null,
+      "states": {
+        "Normal": 24,
+        "Alerta": 0,
+        "Crítico": 0,
+        "N/I": 1
+      }
+    },
+    "SD-03": {
+      "caution_mm": 35,
+      "danger_mm": 50,
+      "caution_ratio": 0.7,
+      "n_observations": 25,
+      "n_numeric": 24,
+      "n_null": 1,
+      "min_mm": 0.0,
+      "max_mm": 25.0,
+      "mean_mm": 5.416666666666667,
+      "median_mm": 0.0,
+      "max_date": "2024-10-10",
+      "first_positive": "2024-04-18",
+      "first_alert": null,
+      "first_critical": null,
+      "states": {
+        "Normal": 24,
+        "Alerta": 0,
+        "Crítico": 0,
+        "N/I": 1
+      }
+    },
+    "SD-04": {
+      "caution_mm": 35,
+      "danger_mm": 50,
+      "caution_ratio": 0.7,
+      "n_observations": 25,
+      "n_numeric": 24,
+      "n_null": 1,
+      "min_mm": 0.0,
+      "max_mm": 0.0,
+      "mean_mm": 0.0,
+      "median_mm": 0.0,
+      "max_date": "2023-01-16",
+      "first_positive": null,
+      "first_alert": null,
+      "first_critical": null,
+      "states": {
+        "Normal": 24,
+        "Alerta": 0,
+        "Crítico": 0,
+        "N/I": 1
+      }
+    }
+  },
+  "maintenance_events": [
+    {
+      "Fecha": "2025-01-07",
+      "horas": 53029.1,
+      "punto": "SD-01",
+      "Comentario": "Equipo sale de reparación general de chasis",
+      "tipo_inferido": "reparación general",
+      "confianza": "alta",
+      "fila_excel": 250
+    },
+    {
+      "Fecha": "2025-01-07",
+      "horas": 53029.1,
+      "punto": "SD-02",
+      "Comentario": "Equipo sale de reparación general de chasis",
+      "tipo_inferido": "reparación general",
+      "confianza": "alta",
+      "fila_excel": 251
+    },
+    {
+      "Fecha": "2025-01-07",
+      "horas": 53029.1,
+      "punto": "SD-03",
+      "Comentario": "Equipo sale de reparación general de chasis",
+      "tipo_inferido": "reparación general",
+      "confianza": "alta",
+      "fila_excel": 252
+    },
+    {
+      "Fecha": "2025-01-07",
+      "horas": 53029.1,
+      "punto": "SD-04",
+      "Comentario": "Equipo sale de reparación general de chasis",
+      "tipo_inferido": "reparación general",
+      "confianza": "alta",
+      "fila_excel": 253
+    }
+  ],
+  "measurement_uncertainty": {
+    "tolerance_mm": 10.0,
+    "purpose": "Interpretación de cambio entre inspecciones",
+    "affects_structural_state": false
+  },
+  "change_class_counts": {
+    "STABLE_WITHIN_TOLERANCE": 79,
+    "SIGNIFICANT_GROWTH": 7,
+    "SIGNIFICANT_DECREASE_REVIEW": 0,
+    "MAINTENANCE_RESET": 4,
+    "N_I": 10
+  },
+  "previous_anomalies_reclassified": [
+    {
+      "fecha": "2024-05-19",
+      "codigo": "SD-01",
+      "delta_L_raw": -10.0,
+      "previous_classification": "WARNING_DECREMENT_REVIEW",
+      "new_classification": "STABLE_WITHIN_TOLERANCE",
+      "delta_L_effective": 0.0,
+      "fila_excel": 178
+    }
+  ],
+  "qa": {
+    "duplicate_rows": 0,
+    "duplicate_keys": 0,
+    "hour_decreases": 0,
+    "duplicate_dates": 0,
+    "duplicate_hour_observations": 0,
+    "date_gap_outliers": 1,
+    "operational_gap_outliers": 0,
+    "decrements": 4,
+    "change_class_counts": {
+      "STABLE_WITHIN_TOLERANCE": 79,
+      "SIGNIFICANT_GROWTH": 7,
+      "SIGNIFICANT_DECREASE_REVIEW": 0,
+      "MAINTENANCE_RESET": 4,
+      "N_I": 10
+    },
+    "previous_anomalies_reclassified": [
+      {
+        "fecha": "2024-05-19",
+        "codigo": "SD-01",
+        "delta_L_raw": -10.0,
+        "previous_classification": "WARNING_DECREMENT_REVIEW",
+        "new_classification": "STABLE_WITHIN_TOLERANCE",
+        "delta_L_effective": 0.0,
+        "fila_excel": 178
+      }
+    ],
+    "large_jumps_over_50mm": 0,
+    "anomaly_rows": 10,
+    "tests_pass": 23,
+    "tests_warning": 1,
+    "tests_fail": 0,
+    "quality_classification": "APTO CON OBSERVACIONES"
+  },
+  "interpretation": {
+    "facts": [
+      "El libro cubre 2023-01-16 a 2025-05-14 en el alcance SD.",
+      "Se encontraron 3 celdas de medición NULL; se conservaron como N/I.",
+      "Se registró una anotación de reparación general de chasis el 2025-01-07."
+    ],
+    "hypotheses": [
+      "Decrementos previos al evento pueden reflejar incertidumbre de medición, variación física o una intervención no anotada.",
+      "Las diferencias entre inspectores son descriptivas; el calendario y la identidad del inspector están asociados y no permiten inferencia causal."
+    ],
+    "human_review_questions": [
+      "¿La reparación general del 2025-01-07 intervino los cuatro puntos SD y hubo remoción/reemplazo de material?",
+      "¿Cuál fue el motivo de los tres registros vacíos?",
+      "¿Las mediciones con decremento se pueden contrastar con fotografías o protocolo de medición?",
+      "¿Qué tolerancia de medición y resolución aplicó cada inspector?"
+    ]
+  }
+}

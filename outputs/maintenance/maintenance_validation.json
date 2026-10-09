@@ -1,0 +1,21 @@
+{
+  "checks": {
+    "feature_count_matches": true,
+    "zone_dates_match": true,
+    "tests_csv_all_pass": true,
+    "summary_feature_count_matches": true,
+    "all_eight_plots_exist": true,
+    "report_exists": true,
+    "raw_null_count_preserved": true,
+    "bridge_count_matches": true,
+    "initial_measure_count_matches": true,
+    "no_normal_n_i_rule_gaps": true,
+    "structural_state_counts_match": true,
+    "all_critical_actions_valid": true,
+    "all_critical_priorities_p4": true,
+    "no_rates_at_maintenance_reset": true,
+    "zone_priority_max_matches": true,
+    "no_raw_source_modified": true
+  },
+  "missing_plots": []
+}

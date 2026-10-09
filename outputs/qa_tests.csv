@@ -1,0 +1,25 @@
+﻿test,status,detail
+hojas_requeridas,PASS,"Hojas: ['Léame', 'Historial', 'Puntos']"
+columnas_historial,PASS,Ausentes: []
+columnas_puntos,PASS,Ausentes: []
+fechas_parseables,PASS,No parseables: 0
+horas_numericas,PASS,No numéricas: 0
+medicion_numerica_o_null,PASS,NULL preservados: 3
+codigos_solo_SD01_SD04,PASS,"Códigos: ['SD-01', 'SD-02', 'SD-03', 'SD-04']"
+equipo_consistente,PASS,Candidatos SD fuera de equipo: 0
+zona_consistente,PASS,Candidatos SD fuera de zona: 0
+descripciones_consistentes_con_catalogo,PASS,Comparación con hoja Puntos
+limites_caution_menor_danger,PASS,Leídos de hoja Puntos
+duplicados_fecha_equipo_codigo,PASS,Filas duplicadas: 0
+cuatro_filas_por_inspeccion,PASS,Fechas con recuento distinto a 4: 0
+cuatro_puntos_por_fecha,PASS,Fechas con distinto número de códigos: 0
+horas_consistentes_en_fecha,PASS,Fechas inconsistentes: 0
+inspector_consistente_en_fecha,PASS,Fechas inconsistentes: 0
+imagen_consistente_en_fecha,PASS,Fechas inconsistentes: 0
+referencias_imagen_resolubles,WARNING,Referencias sin archivo externo en DATOSCRUDOS: ['EH4_SD_tijeras_spindle.png']
+fechas_no_nulas,PASS,Fecha de inspección parseada
+horometro_no_nulo_por_fecha,PASS,Horómetro deduplicado por fecha
+structural_state_uses_raw_and_official_limits,PASS,Estado validado exclusivamente con L RAW y umbrales oficiales; tolerancia no aplicada
+delta_effective_applies_tolerance_only,PASS,Tolerancia operacional ±10 mm
+growth_rates_follow_class_policy,PASS,"Tasa RAW conservada; efectiva respeta NULL, mantenimiento y tolerancia"
+change_class_partition,PASS,"Clases: {'STABLE_WITHIN_TOLERANCE': 79, 'SIGNIFICANT_GROWTH': 7, 'SIGNIFICANT_DECREASE_REVIEW': 0, 'MAINTENANCE_RESET': 4, 'N_I': 10}"

@@ -1,0 +1,4 @@
+﻿point,from_date,to_date,from_hours,to_hours,from_L_raw_mm,to_L_raw_mm,delta_L_bridged_raw,elapsed_days,elapsed_hours,null_observations_spanned,warning,rate_calculated,source_row_from,source_row_to
+SD-02,2023-07-17,2023-09-22,44280.2,45436.5,0.0,0.0,0.0,67,1156.300000000003,1,GAP_SPANNING_CHANGE,False,71,95
+SD-03,2023-05-09,2023-07-17,43139.3,44280.2,0.0,0.0,0.0,69,1140.8999999999942,1,GAP_SPANNING_CHANGE,False,48,72
+SD-04,2023-12-01,2024-02-11,46646.6,47870.3,0.0,0.0,0.0,72,1223.7000000000044,1,GAP_SPANNING_CHANGE,False,121,145

@@ -1,0 +1,26 @@
+﻿date,hours,zone_state,worst_point,max_severity_ratio,normal_count,alert_count,critical_count,not_inspected_count,significant_growth_count,highest_priority,recommended_action,maintenance_event,data_completeness_pct,priority_tie,priority_tie_note
+2023-01-16,41236.0,NORMAL,SD-01,0.0,4,0,0,0,0,,INITIAL_MEASURE,False,100.0,False,
+2023-02-18,41767.7,NORMAL,SD-01,0.0,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2023-03-31,42489.4,NORMAL,SD-01,0.0,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2023-05-09,43139.3,NORMAL,SD-01,0.15,4,0,0,0,1,P1,MONITOR_INTENSIFIED,False,100.0,False,
+2023-06-09,43626.8,INCOMPLETE,SD-03,0.2,3,0,0,1,0,P1,REINSPECTION_REQUIRED,False,75.0,False,
+2023-07-17,44280.2,NORMAL,SD-01,0.3,4,0,0,0,1,P1,MONITOR_INTENSIFIED,False,100.0,False,
+2023-08-23,44940.0,INCOMPLETE,SD-02,0.3,3,0,0,1,0,P1,REINSPECTION_REQUIRED,False,75.0,False,
+2023-09-22,45436.5,NORMAL,SD-01,0.35,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2023-10-30,46091.8,NORMAL,SD-02,0.4,4,0,0,0,1,P1,MONITOR_INTENSIFIED,False,100.0,False,
+2023-12-01,46646.6,NORMAL,SD-01,0.45,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2024-01-09,47308.1,INCOMPLETE,SD-01,0.55,3,0,0,1,1,P1,MONITOR_INTENSIFIED,False,75.0,True,2 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2024-02-11,47870.3,NORMAL,SD-01,0.6,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2024-03-13,48382.9,NORMAL,SD-01,0.65,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2024-04-18,48953.6,ALERT,SD-01,0.75,3,1,0,0,1,P3,PRIORITIZE_REPAIR,False,100.0,False,
+2024-05-19,49494.2,ALERT,SD-01,0.7,3,1,0,0,0,P2,PLAN_REPAIR,False,100.0,False,
+2024-06-25,50076.5,ALERT,SD-01,0.75,3,1,0,0,0,P2,PLAN_REPAIR,False,100.0,False,
+2024-08-01,50686.6,ALERT,SD-01,0.9,3,1,0,0,1,P3,PRIORITIZE_REPAIR,False,100.0,False,
+2024-09-07,51310.7,ALERT,SD-01,0.9,3,1,0,0,0,P2,PLAN_REPAIR,False,100.0,False,
+2024-10-10,51906.1,CRITICAL,SD-01,1.0,3,0,1,0,1,P4,REPAIR_BEFORE_OPERATION,False,100.0,False,
+2024-11-15,52549.2,CRITICAL,SD-01,1.0,3,0,1,0,0,P4,REPAIR_BEFORE_OPERATION,False,100.0,False,
+2025-01-07,53029.1,NORMAL,SD-01,0.0,4,0,0,0,0,P1,POST_REPAIR_VERIFICATION,True,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2025-02-06,53486.7,NORMAL,SD-01,0.0,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2025-03-12,54039.0,NORMAL,SD-01,0.0,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2025-04-12,54509.7,NORMAL,SD-01,0.0,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
+2025-05-14,55030.7,NORMAL,SD-01,0.0,4,0,0,0,0,P0,MONITOR_ROUTINE,False,100.0,True,4 puntos comparten prioridad; se eligió mayor severity_ratio y empate residual por código ascendente.
