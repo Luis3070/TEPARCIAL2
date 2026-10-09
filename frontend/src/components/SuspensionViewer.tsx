@@ -12,8 +12,20 @@ import { ErrorBoundary } from './ErrorBoundary'
 const conditionColor:Record<StructuralState,string>={Normal:'#39874d',Alerta:'#d7a322','Crítico':'#c64138','N/I':'#89939d'}
 type SavedPoint = Point & {calibration?:any}
 type Props = {points:SavedPoint[];selectedPoint:string;onSelect:(code:string)=>void;calibratingPoint?:string|null;onCalibrationSave?:(code:string,position:{x:number;y:number;z:number;nx:number;ny:number;nz:number})=>void}
-const PATCH_RADIUS=245
-const PATCH_EDGE_WIDTH=48
+// Surface locator sizes (source-local STL units), not crack dimensions.
+const PATCH_RADIUS_BY_CODE:Record<string,number>={'SD-01':360,'SD-02':360,'SD-03':420,'SD-04':420}
+const PATCH_EDGE_WIDTH_BY_CODE:Record<string,number>={'SD-01':80,'SD-02':80,'SD-03':88,'SD-04':88}
+type SurfacePath={direction:[number,number,number];length:number;radius:number;edgeWidth:number;sourceZRange?:[number,number]}
+const SCISSOR_ARM_SOURCE_Z_RANGE:[number,number]=[280,1100]
+// CAD-local paths: scissor plates extend inward; spindle assemblies rise and flare outward.
+// These are display footprints over the STL, not measured crack dimensions.
+const SURFACE_PATHS_BY_CODE:Record<string,SurfacePath>={
+ 'SD-01':{direction:[-1,-1,0],length:1600,radius:560,edgeWidth:180,sourceZRange:SCISSOR_ARM_SOURCE_Z_RANGE},
+ 'SD-02':{direction:[-1,1,0],length:1600,radius:560,edgeWidth:180,sourceZRange:SCISSOR_ARM_SOURCE_Z_RANGE},
+ 'SD-03':{direction:[-.23,.18,.956],length:2200,radius:650,edgeWidth:200},
+ 'SD-04':{direction:[-.23,-.18,.956],length:2200,radius:650,edgeWidth:200}
+}
+const SURFACE_PATH_TAPER_FRACTION=.06
 
 function Loading(){const {progress}=useProgress();return <Html center><div className="model-loading"><span className="loader-ring"/><b>Preparando geometría</b><small>{Math.round(progress)}%</small></div></Html>}
 function transformHotspot(c:any,center:THREE.Vector3,factor:number){
@@ -30,26 +42,56 @@ function paintSurfacePatches(geometry:THREE.BufferGeometry,points:SavedPoint[],s
  const colorArray=colors.array as Float32Array
  const base=new THREE.Color('#b6bdc2')
  const sites=showPatches?points.filter(p=>p.calibration).map(p=>({
+  code:p.code,
   x:Number(p.calibration.x),y:Number(p.calibration.y),z:Number(p.calibration.z),
-  color:new THREE.Color(conditionColor[p.structural_state])
+  color:new THREE.Color(conditionColor[p.structural_state]),
+  radius:PATCH_RADIUS_BY_CODE[p.code]??420,edgeWidth:PATCH_EDGE_WIDTH_BY_CODE[p.code]??88,
+  sourceZRange:p.code==='SD-01'||p.code==='SD-02'?SCISSOR_ARM_SOURCE_Z_RANGE:null
  })).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z)):[]
- const radiusSquared=PATCH_RADIUS*PATCH_RADIUS
- const innerRadius=PATCH_RADIUS-PATCH_EDGE_WIDTH
- const innerRadiusSquared=innerRadius*innerRadius
+ const corridors=showPatches?points.flatMap(point=>{
+  const path=SURFACE_PATHS_BY_CODE[point.code]
+  if(!path||!point.calibration)return []
+  const start=new THREE.Vector3(Number(point.calibration.x),Number(point.calibration.y),Number(point.calibration.z))
+  const direction=new THREE.Vector3(...path.direction).normalize()
+  return [{code:point.code,color:new THREE.Color(conditionColor[point.structural_state]),start,direction,
+   length:path.length,totalDistance:path.length,radius:path.radius,edgeWidth:path.edgeWidth,
+   sourceZRange:path.sourceZRange??null}]
+ }):[]
  const blended=new THREE.Color()
  for(let i=0;i<position.count;i++){
   const x=position.getX(i),y=position.getY(i),z=position.getZ(i)
   // Invert the display-only X -90° transform: source=(display X,-display Z,display Y).
   const sx=x,sy=-z,sz=y
-  let nearestDistanceSquared=radiusSquared+1
+  let nearestDistanceSquared=Infinity
   let nearestSite:typeof sites[number]|undefined
-  for(const site of sites){
-   const dx=sx-site.x,dy=sy-site.y,dz=sz-site.z,distanceSquared=dx*dx+dy*dy+dz*dz
-   if(distanceSquared<nearestDistanceSquared){nearestDistanceSquared=distanceSquared;nearestSite=site}
+  // Paint each point's intended connected-looking surface region along its CAD-local path.
+  // The spindle vectors rise and drift inward toward the upper spindle bodies shown in the review images.
+  for(const corridor of corridors){
+   if(corridor.sourceZRange&&(sz<corridor.sourceZRange[0]||sz>corridor.sourceZRange[1]))continue
+   const dx=sx-corridor.start.x,dy=sy-corridor.start.y,dz=sz-corridor.start.z
+   const along=dx*corridor.direction.x+dy*corridor.direction.y+dz*corridor.direction.z
+   if(along<0||along>corridor.length)continue
+   const taperStart=corridor.length-corridor.totalDistance*SURFACE_PATH_TAPER_FRACTION
+   const taper=along<=taperStart?1:Math.max(0,(corridor.length-along)/(corridor.length-taperStart))
+   const localRadius=corridor.radius*taper
+   const distanceSquared=Math.max(0,dx*dx+dy*dy+dz*dz-along*along)
+   if(localRadius>0&&distanceSquared<=localRadius*localRadius&&distanceSquared<nearestDistanceSquared){
+    nearestDistanceSquared=distanceSquared
+    nearestSite={code:corridor.code,x:0,y:0,z:0,color:corridor.color,radius:localRadius,
+     edgeWidth:Math.min(corridor.edgeWidth,localRadius),sourceZRange:corridor.sourceZRange}
+   }
+  }
+  if(!nearestSite){
+   for(const site of sites){
+    if(site.sourceZRange&&(sz<site.sourceZRange[0]||sz>site.sourceZRange[1]))continue
+    const dx=sx-site.x,dy=sy-site.y,dz=sz-site.z,distanceSquared=dx*dx+dy*dy+dz*dz
+    if(distanceSquared<=site.radius*site.radius&&distanceSquared<nearestDistanceSquared){nearestDistanceSquared=distanceSquared;nearestSite=site}
+   }
   }
   if(nearestSite){
-   const edgeFactor=nearestDistanceSquared<=innerRadiusSquared?0:(Math.sqrt(nearestDistanceSquared)-innerRadius)/PATCH_EDGE_WIDTH
-   blended.copy(base).lerp(nearestSite.color,.48+.52*Math.min(1,edgeFactor))
+   const innerRadius=nearestSite.radius-nearestSite.edgeWidth
+   const edgeFactor=nearestDistanceSquared<=innerRadius*innerRadius?0:(Math.sqrt(nearestDistanceSquared)-innerRadius)/nearestSite.edgeWidth
+   blended.copy(base).lerp(nearestSite.color,.84+.16*Math.min(1,edgeFactor))
    colorArray[i*3]=blended.r;colorArray[i*3+1]=blended.g;colorArray[i*3+2]=blended.b
   }else{colorArray[i*3]=base.r;colorArray[i*3+1]=base.g;colorArray[i*3+2]=base.b}
  }
@@ -61,10 +103,10 @@ function PointMarker({point,selected,onSelect,center,factor,showLabels}:{point:S
  if(!c)return null
  const color=conditionColor[point.structural_state]
  return <group position={c.position}>
-   <mesh position={c.normal.clone().multiplyScalar(.018)} onClick={(e)=>{e.stopPropagation();onSelect()}}>
-    <sphereGeometry args={[selected ? .085 : .065,20,20]}/><meshStandardMaterial color={color} emissive={color} emissiveIntensity={selected ? .28 : .1} roughness={.3}/>
+   <mesh renderOrder={20} position={c.normal.clone().multiplyScalar(.035)} onClick={(e)=>{e.stopPropagation();onSelect()}}>
+    <sphereGeometry args={[selected ? .13 : .085,20,20]}/><meshStandardMaterial color={color} emissive={color} emissiveIntensity={selected ? .38 : .16} roughness={.3} depthTest={false} depthWrite={false}/>
    </mesh>
-   {showLabels&&<Html distanceFactor={7} position={[0,.24,0]} center><button className={`hotspot-label ${selected?'selected':''}`} onClick={(e)=>{e.stopPropagation();onSelect()}}><i style={{background:color}}/>{point.code}</button></Html>}
+   {showLabels&&<Html distanceFactor={7} zIndexRange={[1000,0]} position={[0,.24,0]} center><button className={`hotspot-label ${selected?'selected':''}`} onClick={(e)=>{e.stopPropagation();onSelect()}}><i style={{background:color}}/>{point.code}</button></Html>}
  </group>
 }
 function SuspensionMesh({points,selectedPoint,onSelect,calibratingPoint,onCalibrationSave,showPatches,showLabels,focusPoint,viewMode,resetVersion}:{points:SavedPoint[];selectedPoint:string;onSelect:(code:string)=>void;calibratingPoint?:string|null;onCalibrationSave?:Props['onCalibrationSave'];showPatches:boolean;showLabels:boolean;focusPoint:string;viewMode:string;resetVersion:number}){
@@ -113,10 +155,11 @@ function SuspensionMesh({points,selectedPoint,onSelect,calibratingPoint,onCalibr
 }
 
 export function SuspensionViewer({points,selectedPoint,onSelect,calibratingPoint=null,onCalibrationSave}:Props){
- const [showPatches,setShowPatches]=useState(true);const [showLabels,setShowLabels]=useState(true);const [viewMode,setViewMode]=useState('isometric');const [resetVersion,setResetVersion]=useState(0);const [focusPoint,setFocusPoint]=useState('')
+ const [showPatches,setShowPatches]=useState(true);const [showLabels,setShowLabels]=useState(true);const [viewMode,setViewMode]=useState('isometric');const [resetVersion,setResetVersion]=useState(0);const [focusPoint,setFocusPoint]=useState(selectedPoint)
  const [calibrationResult,setCalibrationResult]=useState('')
  const [webglSupported,setWebglSupported]=useState<boolean|null>(null)
  useEffect(()=>{try{const canvas=document.createElement('canvas');setWebglSupported(Boolean(window.WebGLRenderingContext&&(canvas.getContext('webgl2')||canvas.getContext('webgl'))))}catch{setWebglSupported(false)}},[])
+ useEffect(()=>{if(selectedPoint)setFocusPoint(selectedPoint)},[selectedPoint])
  const save=(code:string,position:{x:number;y:number;z:number;nx:number;ny:number;nz:number})=>{setCalibrationResult(`${code}: ${position.x.toFixed(1)}, ${position.y.toFixed(1)}, ${position.z.toFixed(1)}`);onCalibrationSave?.(code,position)}
  const selected=points.find(p=>p.code===selectedPoint)
  return <div className="viewer-shell">
@@ -133,6 +176,6 @@ export function SuspensionViewer({points,selectedPoint,onSelect,calibratingPoint
    {!points.some(p=>p.calibration)&&!calibratingPoint&&<div className="uncalibrated-note"><ShieldAlert size={16}/><span>Hotspots sin calibrar. Activa calibración desde Ajustes para ubicar los cuatro puntos sobre el STL.</span></div>}
    <div className="model-state-legend">{(['Normal','Alerta','Crítico','N/I'] as StructuralState[]).map(s=><span key={s}><i style={{background:conditionColor[s]}}/>{s}</span>)}</div>
   </div>
-  <div className="viewer-footer"><div><b>{selected?.code||'Seleccione un punto'}</b><span>{selected?.description||'Elija un hotspot calibrado o use la lista de puntos.'}</span></div><div className="surface-disclaimer">Huella coloreada sobre la malla · localiza el punto SD y refleja su estado; no representa la geometría de la grieta.</div></div>
+  <div className="viewer-footer"><div><b>{selected?.code||'Seleccione un punto'}</b><span>{selected?.description||'Elija un hotspot calibrado o use la lista de puntos.'}</span></div><div className="surface-disclaimer">Huella visual ampliada sobre el STL · refleja el estado del punto, no el alcance de inspección ni la geometría de la grieta.</div></div>
  </div>
 }
