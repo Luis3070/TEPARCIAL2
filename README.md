@@ -1,10 +1,72 @@
 # EH4000 Structural Integrity Dashboard
 
-Dashboard local de integridad estructural para el equipo **EH4-01**, limitado a **Tijeras y spindle (suspensión delantera)** y los puntos **SD-01…SD-04**. La aplicación usa la historia QA ya validada; no edita ni reescribe el libro Excel de origen.
+Dashboard académico del equipo **EH4-01 (Hitachi EH4000)**. El análisis se limita a la suspensión delantera: **tijeras y spindles, puntos SD-01 a SD-04**. Parte de 25 inspecciones históricas validadas (100 lecturas) y conserva el Excel original sin modificarlo.
 
-## Requisitos y arranque en Windows
+## Abrir la versión web
 
-Con Anaconda o Miniconda instalado, desde la raíz del proyecto:
+**Enlace para el evaluador:** [https://luis3070.github.io/TEPARCIAL2/](https://luis3070.github.io/TEPARCIAL2/)
+
+Solo se necesita un navegador actual y conexión a Internet. No hay que instalar Python, Node, Anaconda ni iniciar un servidor. La página es una demostración con datos históricos, **no** telemetría en vivo.
+
+Al entrar, la pantalla **Overview** resume la inspección seleccionada. En la barra lateral, **ACTIVE ASSET → EH4-01** abre la vista 3D del camión; **Select EH4-01 · Open Overview** vuelve al resumen. El camión es contexto visual. **Structural 3D** muestra el STL técnico de suspensión y los cuatro puntos SD; la posición de los marcadores es una calibración visual provisional, no una certificación de ingeniería.
+
+## Guía de uso desde la interfaz
+
+### Consultar una inspección y sus tendencias
+
+1. En el selector **INSPECTION** de la esquina superior derecha, elegir una fecha. Esa selección da contexto a Overview, Structural 3D, Crack analytics y Recommendations.
+2. En **Inspections**, buscar por fecha o inspector con **Filter date or inspector**. El desplegable **All points** permite mostrar las lecturas de un SD concreto. Pulsar una fila o el icono del ojo para ver sus cuatro medidas, comentarios, procedencia y límites.
+3. En **Crack analytics**, escoger el punto de interés y revisar la longitud RAW por fecha y horas de operación, los límites Caution/Danger, los márgenes y los cambios entre inspecciones. Las reparaciones documentadas aparecen en la serie; N/I sigue siendo una medición ausente.
+4. En **Recommendations**, leer la acción propuesta, la prioridad, el valor RAW, los límites y la razón calculada para cada punto. Son reglas de apoyo a la decisión; una persona debe revisar y aprobar cualquier orden de trabajo.
+
+### Registrar una inspección nueva
+
+1. Abrir **Inspections → New inspection**.
+2. Completar **Inspection date**, **Hour meter (h)** e **Inspector name / ID**. La fecha debe ser posterior a la última inspección registrada y el horómetro no puede ser menor que el último.
+3. Para **SD-01, SD-02, SD-03 y SD-04**, escribir la longitud medida en milímetros. Si un punto no se pudo medir, marcar **N/I**. Un campo vacío no equivale a `0 mm`: `0` es una medición válida y N/I significa dato no disponible. Los comentarios son opcionales.
+4. Pulsar **Save inspection**. La nueva campaña aparecerá en el historial y podrá elegirse en el selector **INSPECTION**. Overview, gráficas y recomendaciones se recalculan con ella. La aplicación no sobrescribe fechas históricas ni acepta una fecha duplicada.
+5. Si se dispone de una foto o PDF, adjuntarlo después desde **Evidence** con el procedimiento siguiente.
+
+### Crear y planificar una orden de trabajo
+
+1. Elegir primero la inspección deseada en **INSPECTION** y abrir **Recommendations**. En la tarjeta del punto correspondiente, pulsar **Create work order**.
+2. Revisar o editar **Intervention / work scope** y **Description**. Pulsar **Create PENDING order**. Esta acción crea un borrador pendiente; no registra una reparación realizada.
+3. Abrir **Planning & work orders**. Buscar la orden y pulsar **Approve** solo tras la revisión humana.
+4. Indicar **Scheduled date** y pulsar **Schedule**. Cuando corresponda, usar **Start** y **Complete** para registrar el avance. También se puede cancelar una orden abierta.
+5. El icono **Show audit history** muestra las transiciones. Allí se pueden completar **Responsible** y **Observations** con **Save details**. Los contadores de estado y los filtros **All / Open only** ayudan a consultar el plan.
+
+Las recomendaciones **no** pasan automáticamente a órdenes aprobadas, programadas o ejecutadas. La fecha de trabajo la introduce el usuario.
+
+### Adjuntar evidencia
+
+1. Abrir **Evidence → Select an image or PDF** y escoger un archivo **JPG, PNG, WEBP o PDF** de hasta **20 MB**.
+2. En **Link to**, elegir **Inspection** o **Work order**. Para una inspección, seleccionar **Inspection date** e **Inspection point**. Para una orden, seleccionar **Work order**.
+3. Añadir el **Context** del archivo y pulsar **Upload and link evidence**. El archivo aparecerá en **Uploaded evidence** y se podrá abrir desde allí.
+
+Las referencias a imágenes presentes en el Excel son metadatos: las fotografías históricas originales no fueron entregadas y la aplicación no las presenta como archivos verificados.
+
+### Ver los datos propios y borrar pruebas
+
+En **Settings & calibration → Registros creados por el usuario** aparecen los contadores de inspecciones, órdenes y evidencias creadas en **ese navegador**. **Borrar registros locales** elimina **todos** esos registros nuevos, sus cambios de estado y los archivos adjuntos, tras pedir confirmación. La acción no tiene papelera ni recuperación dentro de la aplicación; las 25 inspecciones importadas permanecen disponibles. Si el navegador borra los datos del sitio, también se pierden los registros nuevos.
+
+## Dónde se guardan los datos de la web
+
+La versión publicada en GitHub Pages guarda las inspecciones nuevas, órdenes y su auditoría en el almacenamiento local del navegador; los archivos adjuntos se guardan en IndexedDB del mismo origen. **Persisten al recargar y al volver a abrir el sitio en ese navegador**, pero no se sincronizan entre navegadores, perfiles, dispositivos o evaluadores. La página no tiene cuentas ni una base de datos compartida. El historial validado se descarga como contenido de solo lectura del sitio.
+
+Se comprobó en la web publicada que una inspección nueva, una orden programada y una imagen seguían presentes después de recargar. Luego se eliminaron con **Borrar registros locales** y, después de otra recarga, los contadores volvieron a cero y la última inspección histórica siguió seleccionada.
+
+## Criterios de interpretación
+
+- Fuente: `DATOSCRUDOS/EH4000_historial_grietas.xlsx`. La carga validada utiliza `outputs/maintenance/maintenance_features.csv`, `outputs/maintenance/zone_snapshot.csv` y las salidas QA vinculadas al hash SHA-256 del libro.
+- `0 mm` es una medición disponible sin grieta detectable; **N/I** es una medición no disponible.
+- `MEASUREMENT_TOLERANCE_MM = 10` se usa para interpretar cambios entre inspecciones. Los estados Normal/Alerta/Crítico se calculan con la longitud RAW y los límites oficiales, sin aplicar esa tolerancia.
+- Un cambio desde la última medida válida anterior a N/I hasta la primera posterior se muestra como cambio a través de un intervalo incompleto, con advertencia. No es una observación consecutiva ni una tasa ordinaria.
+- No se ejecutan predicciones, aprendizaje automático, imputación, suavizado ni interpolación. Las recomendaciones son heurísticas reproducibles y no equivalen a la aprobación de un ingeniero.
+- El STL de suspensión se conserva como malla técnica de una pieza; sus unidades de origen no están documentadas y no es una malla cerrada. El GLB del camión proviene de una conversión del mod FS25 y sirve solo como contexto visual, no como geometría validada para los SD.
+
+## Ejecutar el proyecto completo en Windows (desarrollo)
+
+La versión con FastAPI y SQLite es una instalación local distinta de la web publicada. Con Anaconda o Miniconda, desde la raíz del proyecto:
 
 ```powershell
 conda env create -f environment.yml
@@ -20,87 +82,12 @@ npm install
 npm run dev -- --host 127.0.0.1
 ```
 
-Abrir `http://127.0.0.1:5173`. La documentación interactiva del API está en `http://127.0.0.1:8000/docs`. Para compilar el cliente: `cd frontend; npm run build`.
+Abrir `http://127.0.0.1:5173`; la documentación de la API está en `http://127.0.0.1:8000/docs`. Para compilar: `cd frontend; npm run build`. Para previsualizar una compilación local: `npm run preview -- --port 4173 --strictPort`. Si el servidor de desarrollo se detuvo, hay que volver a iniciarlo; `127.0.0.1` solo funciona en el equipo que lo ejecuta.
 
-### Si la interfaz no inicia
+En esa instalación, `backend/eh4000_integrity.sqlite3` contiene los registros operativos y `backend/uploads/` los adjuntos. Se deben respaldar ambos antes de mover o reinstalar el proyecto. Las variables `EH4000_DB_PATH` y `EH4000_DATABASE_URL` permiten seleccionar otra base.
 
-El servidor de desarrollo debe mantener activa la preparación de dependencias de
-Vite (`optimizeDeps`). React publica entradas CommonJS; desactivar esa preparación
-produce errores como `react/jsx-runtime.js does not provide an export named 'jsx'`
-y deja la pantalla en «Iniciando el dashboard». La configuración incluye
-explícitamente React y sus runtimes JSX para convertirlos a módulos de navegador.
-Después de actualizar la configuración, recargar la página. Si el servidor se
-había detenido, ejecutar otra vez `npm run dev` desde `frontend`.
+## Publicación
 
-Para usar la versión compilada, desde `frontend`:
+El workflow `.github/workflows/pages.yml` genera los datos iniciales desde una base temporal nueva con `scripts/export_static_demo.py`, compila React para GitHub Pages y publica `frontend/dist`. No incluye los registros creados en un navegador por un evaluador. El repositorio también conserva `Dockerfile`, `compose.yaml`, `compose.public.yaml` y `Caddyfile` para una instalación futura con servidor y almacenamiento compartido; **la entrega actual usa el enlace de GitHub Pages indicado arriba**.
 
-```powershell
-npm run build
-npm run preview -- --port 4173 --strictPort
-```
-
-Esa versión se abre en `http://127.0.0.1:4173`. Los cambios de código requieren una
-nueva compilación; el backend debe continuar activo en el puerto 8000.
-
-## Funciones
-
-- Resumen del estado histórico y última inspección disponible (la pantalla no afirma que los datos sean telemetría en vivo).
-- Visor 3D del STL de suspensión delantera, selección de punto, cámara y opacidad, indicadores de severidad y calibración manual de hotspots.
-- Serie de inspección por fecha/horómetro, longitud RAW, límites oficiales, estado estructural, delta con tolerancia operacional de 10 mm, tasas RAW/efectivas y advertencia específica para cambios a través de N/I.
-- Registro de nuevas inspecciones, con cuatro puntos requeridos y opción explícita N/I; el valor en blanco no se convierte a cero.
-- Reglas determinísticas de mantenimiento, órdenes de trabajo con historial de estados, evidencia local, QA y calibración.
-
-Las acciones de mantenimiento sugeridas no se convierten automáticamente en órdenes aprobadas ni programadas. El cambio de estado de una orden es explícito y auditado.
-
-## Datos y límites de interpretación
-
-- Libro fuente: `DATOSCRUDOS/EH4000_historial_grietas.xlsx`. La carga de la app utiliza `outputs/maintenance/maintenance_features.csv`, `outputs/maintenance/zone_snapshot.csv` y salidas QA vinculadas al hash SHA-256 del libro.
-- El backend importa esas inspecciones históricas de forma idempotente a `backend/eh4000_integrity.sqlite3`. No se debe borrar esa base si se desea conservar registros nuevos, órdenes, evidencia o calibraciones creados localmente.
-- `0 mm` es una medición disponible sin grieta detectable; N/I es una medición no disponible.
-- `MEASUREMENT_TOLERANCE_MM = 10` se utiliza únicamente para interpretar cambios entre inspecciones. Los estados Normal/Alerta/Crítico usan la longitud RAW y los límites oficiales sin tolerancia.
-- Un cambio entre la última medición válida anterior a N/I y la primera posterior se presenta como cambio a través de intervalo incompleto, con bandera. No es una observación consecutiva ni una tasa ordinaria.
-- No se ejecuta forecasting, ML, imputación, smoothing ni interpolación.
-- El STL suministrado se conserva como malla técnica de una sola pieza. Sus unidades fuente no están documentadas y la malla no es watertight. Los cuatro hotspots iniciales se mapearon provisionalmente desde el esquema SD al marco local del STL (tijera y spindle por lado); quedan sin confirmar hasta que un ingeniero revise y, si hace falta, ajuste su ubicación en el visor.
-- El I3D del simulador depende de recursos externos/proprietary y no se presenta como geometría integrada. La aplicación muestra el STL real y el esquema SD del formato de inspección.
-- Referencia visual: `frontend/public/assets/schemes/sd_inspection_reference.png`.
-
-## Verificación local
-
-```powershell
-conda activate eh4000-integrity
-python -m pytest backend/tests -q
-cd frontend
-npm run build
-```
-
-La base de pruebas usa una SQLite temporal aislada. La API conserva la base normal cuando corre el dashboard.
-
-## Almacenamiento local
-
-`backend/uploads/` contiene evidencias cargadas por usuarios; `backend/eh4000_integrity.sqlite3` contiene los datos operativos locales. Conviene respaldar ambos antes de mover o reinstalar el proyecto. Las variables `EH4000_DB_PATH` o `EH4000_DATABASE_URL` permiten seleccionar otra base de desarrollo.
-
-## Publicación como sitio web
-
-### Demostración académica sin servidor
-
-La opción recomendada para evaluación es la publicación en GitHub Pages: [abrir el dashboard](https://luis3070.github.io/TEPARCIAL2/). El evaluador puede recorrer el camión GLB, el STL de suspensión, las 25 inspecciones validadas, gráficas, QA, alertas y recomendaciones. También puede registrar inspecciones nuevas, crear y gestionar órdenes de trabajo y adjuntar evidencias con la misma interfaz de la instalación local. Esos registros nuevos se guardan **solo en el navegador donde se crearon** (datos estructurados en almacenamiento local y archivos en IndexedDB); persisten al recargar, pero no se comparten entre usuarios, dispositivos ni navegadores. El historial importado permanece intacto. El archivo `scripts/export_static_demo.py` crea el paquete inicial desde una base temporal nueva y no publica registros privados creados localmente.
-
-El workflow `.github/workflows/pages.yml` genera el paquete, compila React con rutas compatibles con GitHub Pages y publica `frontend/dist`. Para activar el enlace, habilitar **Settings → Pages → Source: GitHub Actions** en el repositorio y subir estos cambios a `main`. La dirección será `https://Luis3070.github.io/TEPARCIAL2/` cuando termine la publicación. No se necesita cuenta adicional ni servidor de Python para los visitantes.
-
-Para registrar información compartida entre usuarios se requiere la instalación completa con servidor y base de datos descrita abajo. El historial Excel y el Word fuente no se entregan directamente al navegador; se exportan únicamente las respuestas necesarias para la interfaz.
-
-La versión de producción sirve la interfaz React compilada y la API FastAPI desde **una sola dirección**. El navegador del visitante no necesita Python, Node, Anaconda ni instalar nada. Las rutas internas, como `/structural-3d` y `/evidence`, también se abren directamente. La API utiliza `/api` en el mismo origen.
-
-Se incluyen `Dockerfile`, `compose.yaml`, `compose.public.yaml` y `Caddyfile` para alojar la aplicación completa en una máquina Linux con almacenamiento persistente. En esa instalación, SQLite y las evidencias se guardan en `deployment-data/`, fuera de la imagen. El contenedor usa un único proceso/worker para SQLite.
-
-### Preparación de la cuenta y el enlace
-
-1. Crear una máquina Linux en un alojamiento gratuito que permita Docker y conserve el disco. Una opción es **Oracle Cloud Always Free**, eligiendo explícitamente una instancia y volumen marcados *Always Free*. Oracle suele pedir tarjeta para verificar la identidad y puede carecer de capacidad en una región. No cambiar a recursos de pago. También se puede usar cualquier servidor Linux propio disponible para la tarea.
-2. Crear un subdominio gratuito, por ejemplo en DuckDNS, y dirigirlo a la IP pública de la máquina. Abrir TCP 80 y 443 en el firewall de la nube y del sistema.
-3. Llevar este repositorio al servidor. Revisar antes los permisos de redistribución del archivo `frontend/public/assets/hitachi_eh4000_fs25.glb`: el mod de origen no documenta licencia en los archivos entregados. Aunque se use en una tarea, un enlace público permite descargar el GLB. Si no se cuenta con permiso, sustituirlo por un recurso autorizado antes de publicar.
-4. Copiar `.env.example` a `.env` y asignar `EH4000_DOMAIN` al subdominio y `EH4000_SITE_PASSWORD` a una contraseña larga. El usuario de acceso es `eh4000`. Compartir la contraseña solo con quienes deban usar el tablero. El archivo `.env` está ignorado por Git.
-5. En el servidor Linux, crear el almacenamiento con `sudo mkdir -p deployment-data/uploads` y `sudo chown -R 10001:10001 deployment-data`. Ejecutar `docker compose -f compose.yaml -f compose.public.yaml up -d --build`. Caddy obtiene y renueva HTTPS automáticamente cuando DNS y puertos ya funcionan. El enlace queda `https://<EH4000_DOMAIN>/`.
-
-Para revisar registros: `docker compose -f compose.yaml -f compose.public.yaml logs --tail=100`. Antes de actualizar o mover el servidor, respaldar `deployment-data/` y los volúmenes `caddy_data` y `caddy_config`. La historia validada se importa al iniciar solo si no existe en la base. La base SQLite local de Windows y las evidencias locales **no se transfieren automáticamente** al servidor.
-
-Sin cuenta de alojamiento y subdominio todavía no existe una URL pública real; `127.0.0.1` solo abre en el equipo que ejecuta la aplicación. Un servicio gratuito sin disco persistente perdería las nuevas inspecciones, órdenes y evidencias al reiniciarse, por eso no se recomienda para la entrega funcional.
+El archivo `frontend/public/assets/hitachi_eh4000_fs25.glb` corresponde al mod FS25 facilitado para el contexto visual del camión. Antes de redistribuir ese recurso fuera de esta demostración académica conviene comprobar sus términos de uso.
