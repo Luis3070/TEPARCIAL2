@@ -1,0 +1,20 @@
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      EH4000_DOMAIN: ${EH4000_DOMAIN:?Set EH4000_DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - eh4000
+
+volumes:
+  caddy_data:
+  caddy_config:

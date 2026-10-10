@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import re
 import uuid
 from datetime import date, datetime, timezone
@@ -378,7 +379,8 @@ async def upload_evidence(file: UploadFile = File(...), point: str | None = Form
     content = await file.read(20 * 1024 * 1024 + 1)
     if len(content) > 20 * 1024 * 1024: raise HTTPException(413, "Tamaño máximo: 20 MB.")
     suffix = Path(file.filename or "evidence").suffix[:10]
-    target = ROOT / "backend" / "uploads" / f"{uuid.uuid4().hex}{suffix}"
+    upload_dir = Path(os.environ.get("EH4000_UPLOAD_DIR", ROOT / "backend" / "uploads"))
+    target = upload_dir / f"{uuid.uuid4().hex}{suffix}"
     target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(content)
     row = Evidence(filename=Path(file.filename or "evidence").name, stored_path=str(target), media_type=file.content_type,
         inspection_id=inspection_id, work_order_id=work_order_id, point=point, notes=notes)

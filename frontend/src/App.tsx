@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Activity, BarChart3, Box, CalendarDays, Camera, ChevronDown, CircleGauge, ClipboardList, Home, Menu, ShieldCheck, Wrench, Settings2, WifiOff, Database } from 'lucide-react'
 import { api } from './services/api'
+import { STATIC_DEMO } from './services/staticDemo'
 import { useUI } from './state'
 const OverviewPage=lazy(()=>import('./pages/OverviewPage').then(m=>({default:m.OverviewPage})))
 const StructuralPage=lazy(()=>import('./pages/StructuralPage').then(m=>({default:m.StructuralPage})))
@@ -42,7 +43,8 @@ export default function App(){
      <label className="inspection-select"><span>INSPECTION</span><select value={active?.id??''} onChange={e=>setInspection(e.target.value?Number(e.target.value):undefined)}>{ordered.map(i=><option key={i.id} value={i.id}>{i.date} · {i.hours.toLocaleString('es-CO')} h</option>)}</select><ChevronDown size={13}/></label>
      <div className="profile-avatar">{active?.inspector.slice(-2)||'EH'}</div>
    </div></header>
-   {!health.isSuccess&&<div className="api-banner"><WifiOff size={15}/><span>{health.isError?'No se puede conectar con FastAPI. Inicia el backend en http://127.0.0.1:8000.':'Conectando con el servicio local…'}</span></div>}
+   {STATIC_DEMO&&<div className="api-banner" role="status"><Database size={15}/><span>Demostración académica · historial validado · solo consulta. No se guardan inspecciones, órdenes ni evidencias nuevas.</span></div>}
+   {!health.isSuccess&&<div className="api-banner"><WifiOff size={15}/><span>{health.isError?'No se pudo cargar el historial. Intenta recargar la página.':'Cargando el historial validado…'}</span></div>}
    <div className="page-container"><Suspense fallback={<div className="page-loading"><span className="loader-ring"/> Loading module…</div>}><Routes>
     <Route path="/" element={<OverviewPage/>}/><Route path="/asset-selection" element={<AssetSelectionPage/>}/><Route path="/structural-3d" element={<StructuralPage/>}/><Route path="/inspections" element={<InspectionsPage/>}/><Route path="/analytics" element={<AnalyticsPage/>}/><Route path="/maintenance" element={<MaintenancePage/>}/><Route path="/planning" element={<PlanningPage/>}/><Route path="/evidence" element={<EvidencePage/>}/><Route path="/settings" element={<SettingsPage/>}/><Route path="*" element={<Navigate to="/" replace/>}/>
    </Routes></Suspense></div>

@@ -7,3 +7,41 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 *.log
+
+# Python environments, type/lint caches and coverage output
+.venv/
+venv/
+env/
+ENV/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Node build and editor-generated TypeScript state
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local configuration and operating-system metadata
+.env
+.env.*
+!.env.example
+deployment-data/
+frontend/public/demo/data.json
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local SQLite journals and app logs
+*.sqlite3-wal
+*.sqlite3-shm
+*.db-wal
+*.db-shm
+
+# Temporary presentation authoring and render artifacts; retain the final PPTX
+.codex-build-presentation/
+.codex-finalizer/
+outputs/presentations/assets/
+outputs/presentations/rendered/

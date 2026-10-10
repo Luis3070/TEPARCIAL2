@@ -1,7 +1,9 @@
 import type { Evidence, Inspection, MaintenanceEvent, Point, Recommendation, Snapshot, WorkOrder } from '../types'
+import { STATIC_DEMO, staticRequest } from './staticDemo'
 
-const BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000/api'
+const BASE = import.meta.env.VITE_API_BASE || (import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api')
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  if (STATIC_DEMO) return staticRequest<T>(path, init)
   const response = await fetch(`${BASE}${path}`, init)
   if (!response.ok) {
     let detail = `${response.status} ${response.statusText}`

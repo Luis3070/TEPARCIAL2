@@ -78,3 +78,29 @@ La base de pruebas usa una SQLite temporal aislada. La API conserva la base norm
 ## Almacenamiento local
 
 `backend/uploads/` contiene evidencias cargadas por usuarios; `backend/eh4000_integrity.sqlite3` contiene los datos operativos locales. Conviene respaldar ambos antes de mover o reinstalar el proyecto. Las variables `EH4000_DB_PATH` o `EH4000_DATABASE_URL` permiten seleccionar otra base de desarrollo.
+
+## Publicación como sitio web
+
+### Demostración académica sin servidor
+
+La opción recomendada para evaluación es una publicación estática en GitHub Pages. El evaluador abre el enlace en su navegador y puede recorrer el dashboard, el camión GLB, el STL de suspensión, las 25 inspecciones validadas, gráficas, QA, alertas y recomendaciones. El sitio marca claramente que es una **demostración histórica de solo consulta**: no presenta como guardadas inspecciones, órdenes o evidencias nuevas. El archivo `scripts/export_static_demo.py` crea el paquete JSON desde una base temporal nueva, de modo que no publica registros privados creados localmente.
+
+El workflow `.github/workflows/pages.yml` genera el paquete, compila React con rutas compatibles con GitHub Pages y publica `frontend/dist`. Para activar el enlace, habilitar **Settings → Pages → Source: GitHub Actions** en el repositorio y subir estos cambios a `main`. La dirección será `https://Luis3070.github.io/TEPARCIAL2/` cuando termine la publicación. No se necesita cuenta adicional ni servidor de Python para los visitantes.
+
+La versión estática no reemplaza la instalación completa descrita abajo cuando se requiere registrar información compartida. El historial Excel y el Word fuente no se entregan directamente al navegador; se exportan únicamente las respuestas necesarias para la interfaz.
+
+La versión de producción sirve la interfaz React compilada y la API FastAPI desde **una sola dirección**. El navegador del visitante no necesita Python, Node, Anaconda ni instalar nada. Las rutas internas, como `/structural-3d` y `/evidence`, también se abren directamente. La API utiliza `/api` en el mismo origen.
+
+Se incluyen `Dockerfile`, `compose.yaml`, `compose.public.yaml` y `Caddyfile` para alojar la aplicación completa en una máquina Linux con almacenamiento persistente. En esa instalación, SQLite y las evidencias se guardan en `deployment-data/`, fuera de la imagen. El contenedor usa un único proceso/worker para SQLite.
+
+### Preparación de la cuenta y el enlace
+
+1. Crear una máquina Linux en un alojamiento gratuito que permita Docker y conserve el disco. Una opción es **Oracle Cloud Always Free**, eligiendo explícitamente una instancia y volumen marcados *Always Free*. Oracle suele pedir tarjeta para verificar la identidad y puede carecer de capacidad en una región. No cambiar a recursos de pago. También se puede usar cualquier servidor Linux propio disponible para la tarea.
+2. Crear un subdominio gratuito, por ejemplo en DuckDNS, y dirigirlo a la IP pública de la máquina. Abrir TCP 80 y 443 en el firewall de la nube y del sistema.
+3. Llevar este repositorio al servidor. Revisar antes los permisos de redistribución del archivo `frontend/public/assets/hitachi_eh4000_fs25.glb`: el mod de origen no documenta licencia en los archivos entregados. Aunque se use en una tarea, un enlace público permite descargar el GLB. Si no se cuenta con permiso, sustituirlo por un recurso autorizado antes de publicar.
+4. Copiar `.env.example` a `.env` y asignar `EH4000_DOMAIN` al subdominio y `EH4000_SITE_PASSWORD` a una contraseña larga. El usuario de acceso es `eh4000`. Compartir la contraseña solo con quienes deban usar el tablero. El archivo `.env` está ignorado por Git.
+5. En el servidor Linux, crear el almacenamiento con `sudo mkdir -p deployment-data/uploads` y `sudo chown -R 10001:10001 deployment-data`. Ejecutar `docker compose -f compose.yaml -f compose.public.yaml up -d --build`. Caddy obtiene y renueva HTTPS automáticamente cuando DNS y puertos ya funcionan. El enlace queda `https://<EH4000_DOMAIN>/`.
+
+Para revisar registros: `docker compose -f compose.yaml -f compose.public.yaml logs --tail=100`. Antes de actualizar o mover el servidor, respaldar `deployment-data/` y los volúmenes `caddy_data` y `caddy_config`. La historia validada se importa al iniciar solo si no existe en la base. La base SQLite local de Windows y las evidencias locales **no se transfieren automáticamente** al servidor.
+
+Sin cuenta de alojamiento y subdominio todavía no existe una URL pública real; `127.0.0.1` solo abre en el equipo que ejecuta la aplicación. Un servicio gratuito sin disco persistente perdería las nuevas inspecciones, órdenes y evidencias al reiniciarse, por eso no se recomienda para la entrega funcional.

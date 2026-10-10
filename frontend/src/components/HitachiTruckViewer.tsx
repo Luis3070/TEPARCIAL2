@@ -4,6 +4,7 @@ import { Center, Html, OrbitControls, useProgress } from '@react-three/drei'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import * as THREE from 'three'
 import { ErrorBoundary } from './ErrorBoundary'
+import { assetUrl } from '../services/staticDemo'
 
 function ModelLoading() {
   const { progress } = useProgress()
@@ -11,7 +12,7 @@ function ModelLoading() {
 }
 
 function EH4000Model() {
-  const gltf = useLoader(GLTFLoader, '/assets/hitachi_eh4000_fs25.glb')
+  const gltf = useLoader(GLTFLoader, assetUrl('hitachi_eh4000_fs25.glb'))
   const scene = gltf.scene.clone(true)
   scene.traverse((object) => {
     if (object instanceof THREE.Mesh) {

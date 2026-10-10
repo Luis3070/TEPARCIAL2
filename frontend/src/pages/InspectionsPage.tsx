@@ -7,9 +7,10 @@ import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { EmptyState } from '../components/EmptyState'
 import { stateSlug, type Inspection, type Measurement } from '../types'
+import { assetUrl, STATIC_DEMO } from '../services/staticDemo'
 
 const POINTS = ['SD-01', 'SD-02', 'SD-03', 'SD-04']
-const SD_SCHEME_URL = '/assets/schemes/sd_inspection_reference.png'
+const SD_SCHEME_URL = assetUrl('schemes/sd_inspection_reference.png')
 
 export function InspectionsPage() {
   const [showForm, setShowForm] = useState(false)
@@ -36,7 +37,7 @@ export function InspectionsPage() {
   ), 0)
 
   return <>
-    <PageHeader eyebrow="INSPECTION REGISTER" title="Inspections" description="Registro histórico y nuevas campañas de inspección · Los históricos importados son inmutables." action={<button className="button button-primary" onClick={() => setShowForm(true)}><Plus size={16} /> New inspection</button>} />
+    <PageHeader eyebrow="INSPECTION REGISTER" title="Inspections" description="Registro histórico y nuevas campañas de inspección · Los históricos importados son inmutables." action={STATIC_DEMO ? undefined : <button className="button button-primary" onClick={() => setShowForm(true)}><Plus size={16} /> New inspection</button>} />
     <div className="inspections-summary">
       <div><FileClock size={17} /><span><b>{inspections.data?.length ?? '—'}</b> inspection dates</span></div>
       <div><span>Fuente histórica:</span><b>25 fechas · 100 puntos</b></div>

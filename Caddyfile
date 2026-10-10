@@ -1,0 +1,4 @@
+{$EH4000_DOMAIN} {
+    encode zstd gzip
+    reverse_proxy eh4000:8080
+}

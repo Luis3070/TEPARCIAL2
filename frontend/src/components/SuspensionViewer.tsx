@@ -8,6 +8,7 @@ import { Box, RotateCcw, Scan, View, Eye, EyeOff, Crosshair, Check, ShieldAlert 
 import type { Point, StructuralState } from '../types'
 import { StatusBadge } from './StatusBadge'
 import { ErrorBoundary } from './ErrorBoundary'
+import { assetUrl } from '../services/staticDemo'
 
 const conditionColor:Record<StructuralState,string>={Normal:'#39874d',Alerta:'#d7a322','Crítico':'#c64138','N/I':'#89939d'}
 type SavedPoint = Point & {calibration?:any}
@@ -110,7 +111,7 @@ function PointMarker({point,selected,onSelect,center,factor,showLabels}:{point:S
  </group>
 }
 function SuspensionMesh({points,selectedPoint,onSelect,calibratingPoint,onCalibrationSave,showPatches,showLabels,focusPoint,viewMode,resetVersion}:{points:SavedPoint[];selectedPoint:string;onSelect:(code:string)=>void;calibratingPoint?:string|null;onCalibrationSave?:Props['onCalibrationSave'];showPatches:boolean;showLabels:boolean;focusPoint:string;viewMode:string;resetVersion:number}){
- const loaded=useLoader(STLLoader,'/assets/EH4000_front_suspension_V7_final.stl')
+ const loaded=useLoader(STLLoader,assetUrl('EH4000_front_suspension_V7_final.stl'))
  const geometry=useMemo(()=>{const g=loaded.clone();g.rotateX(-Math.PI/2);g.computeVertexNormals();return g},[loaded])
  useEffect(()=>{paintSurfacePatches(geometry,points,showPatches)},[geometry,points,showPatches])
  const center=useMemo(()=>{geometry.computeBoundingBox();return geometry.boundingBox!.getCenter(new THREE.Vector3())},[geometry])

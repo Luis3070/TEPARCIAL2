@@ -1,0 +1,12 @@
+services:
+  eh4000:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      EH4000_SITE_PASSWORD: ${EH4000_SITE_PASSWORD:?Set EH4000_SITE_PASSWORD in .env}
+      EH4000_DB_PATH: /data/eh4000_integrity.sqlite3
+      EH4000_UPLOAD_DIR: /data/uploads
+    volumes:
+      - ./deployment-data:/data
