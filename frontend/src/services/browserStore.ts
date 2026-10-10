@@ -17,6 +17,13 @@ export const browserInspections=()=>read().inspections
 export const browserOrders=()=>read().orders
 export const browserEvidence=()=>read().evidence
 export const browserAudit=(id:number)=>read().audit[String(id)]||[]
+export function browserRecordCounts(){const store=read();return {inspections:store.inspections.length,orders:store.orders.length,evidence:store.evidence.length}}
+export async function clearBrowserRecords():Promise<void>{
+  const db=await evidenceDb()
+  try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('files','readwrite');tx.objectStore('files').clear();tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}
+  finally{db.close()}
+  localStorage.removeItem(KEY)
+}
 
 function stateFor(length:number|null,caution:number,danger:number):Measurement['structural_state']{return length===null?'N/I':length<caution?'Normal':length<danger?'Alerta':'Crítico'}
 function decide(m:Measurement,firstPostRepair:boolean,firstValid:boolean):[string,string|null,string|null,string]{
