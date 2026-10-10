@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { Activity, AlertTriangle, ArrowDownRight, ArrowRight, ArrowUpRight, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Gauge, Play, Pause, RefreshCw, ShieldCheck, Wrench } from 'lucide-react'
 import { api } from '../services/api'
-import { STATIC_DEMO } from '../services/staticDemo'
 import { useUI } from '../state'
 import { PageHeader } from '../components/PageHeader'
 import { StatusBadge, PriorityBadge } from '../components/StatusBadge'
@@ -40,7 +39,7 @@ export function OverviewPage(){
  if(summary.isLoading)return <div className="page-loading"><span className="loader-ring"/> Loading asset condition…</div>
  if(summary.isError)return <div className="error-card"><AlertTriangle/><div><b>No fue posible cargar la condición.</b><span>{String(summary.error)}</span></div></div>
  return <>
-  <PageHeader eyebrow="ASSET OVERVIEW · EH4-01" title="Structural Integrity" description="Suspensión delantera · Tijeras y spindle" action={<button className="button button-outline" onClick={()=>navigate('/inspections')}><ClipboardListIcon/>{STATIC_DEMO?' Ver historial':' New inspection'}</button>}/>
+  <PageHeader eyebrow="ASSET OVERVIEW · EH4-01" title="Structural Integrity" description="Suspensión delantera · Tijeras y spindle" action={<button className="button button-outline" onClick={()=>navigate('/inspections')}><ClipboardListIcon/> New inspection</button>}/>
   <div className="latest-strip"><div className="latest-strip-mark"><Clock3 size={16}/></div><div><b>Last recorded condition</b><span>{data.date} · {data.hours?.toLocaleString('es-CO')} h · {data.inspector}</span></div><span className="history-pill">HISTORICAL · NOT LIVE</span><div className="strip-spacer"/><div className="asset-zone"><span>ZONE CONDITION</span><b className={`zone-state zone-${data.zone_state?.toLowerCase()}`}>{data.zone_state?.replaceAll('_',' ')}</b></div><div className="zone-sep"/><div className="asset-zone"><span>HIGHEST ACTION</span><b>{niceAction(data.recommended_action)}</b></div><PriorityBadge priority={data.highest_priority}/></div>
   <div className="condition-kpis">{badges.map(k=>{const Icon=k.icon;return <button key={k.label} className={`condition-kpi kpi-${k.color}`} onClick={()=>navigate('/analytics')}><div className="kpi-icon"><Icon size={16}/></div><span>{k.label}</span><strong>{k.value}</strong><small>inspection points</small></button>})}<div className="condition-kpi kpi-completeness"><div className="kpi-icon"><ShieldCheck size={16}/></div><span>DATA COMPLETENESS</span><strong>{data.data_completeness_pct?.toFixed(0)}<i>%</i></strong><small>of 4 points measured</small></div><button className="condition-kpi kpi-priority" onClick={()=>navigate('/maintenance')}><div className="kpi-icon"><Wrench size={16}/></div><span>WORST POINT</span><strong>{data.worst_point}</strong><small>{focused?.description||'Highest current recommendation'}</small></button></div>
   <div className="overview-main-grid">

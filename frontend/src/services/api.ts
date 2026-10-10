@@ -1,5 +1,6 @@
 import type { Evidence, Inspection, MaintenanceEvent, Point, Recommendation, Snapshot, WorkOrder } from '../types'
 import { STATIC_DEMO, staticRequest } from './staticDemo'
+import { browserEvidenceUrl } from './browserStore'
 
 const BASE = import.meta.env.VITE_API_BASE || (import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api')
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -41,4 +42,5 @@ export const api = {
   hotspots: () => request<any[]>('/3d/hotspots'),
   saveHotspot: (code:string,body:unknown) => request<any>(`/3d/hotspots/${code}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),
   evidenceUrl: (id:number) => `${BASE}/evidence/${id}`,
+  evidenceFileUrl: (id:number) => STATIC_DEMO ? browserEvidenceUrl(id) : Promise.resolve(`${BASE}/evidence/${id}`),
 }

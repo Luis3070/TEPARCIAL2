@@ -1,4 +1,5 @@
-import type { Inspection } from '../types'
+import type { Inspection, Point } from '../types'
+import { browserAudit, browserEvents, browserEvidence, browserInspections, browserOrders, createBrowserInspection, createBrowserOrder, overviewFor, pointsFor, recommendationFor, saveBrowserEvidence, snapshotFor, updateBrowserOrder } from './browserStore'
 
 export const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 export const assetUrl = (path: string) => `${import.meta.env.BASE_URL}assets/${path}`
@@ -30,19 +31,25 @@ function load(): Promise<DemoData> {
 }
 
 export async function staticRequest<T>(path: string, init?: RequestInit): Promise<T> {
-  if (init?.method && init.method !== 'GET') {
-    throw new Error('Esta publicación es de consulta. Los registros nuevos requieren la instalación con servidor.')
-  }
   const data = await load()
   const url = new URL(path, 'https://demo.invalid')
   const route = url.pathname
-  const latestId = String(data.inspections[0]?.id ?? '')
+  const added = browserInspections()
+  const inspections = [...added, ...data.inspections].sort((a,b)=>b.date.localeCompare(a.date))
+  const latestId = String(inspections[0]?.id ?? '')
   const selectedId = url.searchParams.get('inspection_id') || latestId
+  const selected = inspections.find(row=>row.id===Number(selectedId))
+  const method = init?.method?.toUpperCase() || 'GET'
+  if(method==='POST'&&route==='/inspections')return createBrowserInspection(JSON.parse(String(init?.body)),data.inspections) as T
+  if(method==='POST'&&route==='/work-orders')return createBrowserOrder(JSON.parse(String(init?.body)),inspections.flatMap(i=>i.measurements)) as T
+  if(method==='PATCH'&&/^\/work-orders\/\d+$/.test(route))return updateBrowserOrder(Number(route.split('/')[2]),JSON.parse(String(init?.body))) as T
+  if(method==='POST'&&route==='/evidence')return saveBrowserEvidence(init?.body as FormData,inspections,browserOrders()) as T
+  if(method!=='GET')throw new Error(`Operación no disponible: ${method} ${route}`)
   let value: unknown
 
-  if (route === '/health') value = data.health
+  if (route === '/health') value = {...(data.health as object),inspection_dates:inspections.length}
   else if (route === '/inspections') {
-    let rows = data.inspections
+    let rows = inspections
     const start = url.searchParams.get('start')
     const end = url.searchParams.get('end')
     const point = url.searchParams.get('point')
@@ -53,17 +60,19 @@ export async function staticRequest<T>(path: string, init?: RequestInit): Promis
     const limit = Number(url.searchParams.get('limit') || 100)
     value = rows.slice(offset, offset + limit)
   }
-  else if (route.startsWith('/inspections/')) value = data.inspections.find(row => row.id === Number(route.split('/')[2]))
-  else if (route === '/snapshots') value = data.snapshots
-  else if (route === '/points') value = data.pointsByInspection[selectedId]
-  else if (route.startsWith('/points/') && route.endsWith('/history')) value = data.pointHistories[route.split('/')[2]]
-  else if (route === '/maintenance/recommendations') value = data.recommendations[selectedId]
-  else if (route === '/maintenance/events') value = data.events
-  else if (route === '/work-orders' || route.startsWith('/work-orders/') || route === '/evidence') value = []
-  else if (route === '/analytics/overview') value = data.overviews[selectedId]
+  else if (route.startsWith('/inspections/')) value = inspections.find(row => row.id === Number(route.split('/')[2]))
+  else if (route === '/snapshots') value = [...data.snapshots,...added.map(snapshotFor)].sort((a:any,b:any)=>a.date.localeCompare(b.date))
+  else if (route === '/points') value = data.pointsByInspection[selectedId] || (selected ? pointsFor(selected,data.pointsByInspection[String(data.inspections[0].id)] as Point[]) : undefined)
+  else if (route.startsWith('/points/') && route.endsWith('/history')) {const code=route.split('/')[2];value=[...(data.pointHistories[code]||[]),...added.map(i=>{const m=i.measurements.find(x=>x.point===code);return m?{...m,date:i.date,hours:i.hours,inspector:i.inspector,equipment:i.equipment,maintenance_event_at_date:i.maintenance_event}:null}).filter(Boolean)].sort((a:any,b:any)=>a.date.localeCompare(b.date))}
+  else if (route === '/maintenance/recommendations') value = data.recommendations[selectedId] || (selected ? recommendationFor(selected) : undefined)
+  else if (route === '/maintenance/events') value = [...data.events,...browserEvents(added)].sort((a:any,b:any)=>a.date.localeCompare(b.date))
+  else if (route === '/work-orders') {let rows=browserOrders();const status=url.searchParams.get('status'),point=url.searchParams.get('point');if(status)rows=rows.filter(r=>r.status===status);if(point)rows=rows.filter(r=>r.point===point);value=rows}
+  else if (/^\/work-orders\/\d+\/history$/.test(route)) value = browserAudit(Number(route.split('/')[2]))
+  else if (route === '/evidence') {let rows=browserEvidence();const point=url.searchParams.get('point'),inspection=url.searchParams.get('inspection_id'),order=url.searchParams.get('work_order_id');if(point)rows=rows.filter(r=>r.point===point);if(inspection)rows=rows.filter(r=>r.inspection_id===Number(inspection));if(order)rows=rows.filter(r=>r.work_order_id===Number(order));value=rows}
+  else if (route === '/analytics/overview') value = data.overviews[selectedId] || (selected ? overviewFor(selected,data.overviews[String(data.inspections[0].id)]) : undefined)
   else if (route === '/analytics/qa') value = data.qa
   else if (route === '/analytics/maintenance-summary') value = data.maintenanceSummary
-  else if (route === '/analytics/inspectors') value = data.inspectors
+  else if (route === '/analytics/inspectors') value = [...data.inspectors,...added.map(i=>({date:i.date,hours:i.hours,inspector:i.inspector}))].sort((a:any,b:any)=>a.date.localeCompare(b.date))
   else if (route === '/3d/models') value = data.model
   else if (route === '/3d/hotspots') value = data.hotspots
 

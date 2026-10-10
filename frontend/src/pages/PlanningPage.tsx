@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CalendarDays, Check, Clock3, Play, Plus, RotateCcw, X, ClipboardList } from 'lucide-react'
 import { api } from '../services/api'
-import { STATIC_DEMO } from '../services/staticDemo'
 import { useUI } from '../state'
 import { PageHeader } from '../components/PageHeader'
 import { PriorityBadge } from '../components/StatusBadge'
@@ -19,10 +18,10 @@ export function PlanningPage(){
  const rows=filter==='OPEN'?allRows.filter(o=>!['COMPLETED','CANCELED'].includes(o.status)):filter==='ALL'?allRows:allRows.filter(o=>o.status===filter)
  const counts=['PENDING','APPROVED','SCHEDULED','IN_PROGRESS','COMPLETED','CANCELED'].map(status=>({status,count:(orders.data||[]).filter(o=>o.status===status).length}))
  return <>
-  <PageHeader eyebrow="MAINTENANCE PLANNING" title="Work orders" description="Planificación con aprobación explícita. Las recomendaciones no se convierten automáticamente en trabajo ejecutado." action={STATIC_DEMO?undefined:<button className="button button-outline" onClick={()=>navigate('/maintenance')}><Plus size={15}/> From recommendation</button>}/>
+  <PageHeader eyebrow="MAINTENANCE PLANNING" title="Work orders" description="Planificación con aprobación explícita. Las recomendaciones no se convierten automáticamente en trabajo ejecutado." action={<button className="button button-outline" onClick={()=>navigate('/maintenance')}><Plus size={15}/> From recommendation</button>}/>
   <div className="planning-stats">{counts.map(c=><button key={c.status} className={`planning-stat ${filter===c.status?'selected':''}`} onClick={()=>setFilter(filter===c.status?'ALL':c.status)}><span>{c.status.replaceAll('_',' ')}</span><b>{c.count}</b></button>)}</div>
   <section className="panel planning-panel"><div className="table-toolbar"><div><b>Work order register</b><span>Transitions are recorded in the audit trail</span></div><div className="table-filter-buttons"><button className={filter==='ALL'?'selected':''} onClick={()=>setFilter('ALL')}>All</button><button className={filter==='OPEN'?'selected':''} onClick={()=>setFilter('OPEN')}>Open only</button></div></div>
-   {rows.length? <div className="workorder-list">{rows.map(wo=><WorkOrderRow key={wo.id} order={wo} expanded={expanded===wo.id} history={history.data||[]} onExpand={()=>setExpanded(expanded===wo.id?null:wo.id)} onUpdate={(body)=>mutation.mutate({id:wo.id,body})} pending={mutation.isPending}/>)}</div>:<EmptyState title="No work orders in this view" description={STATIC_DEMO?'La versión de evaluación solo muestra el historial validado; no registra órdenes nuevas.':'Create a draft from a maintenance recommendation, then approve and schedule it here.'}/>}
+   {rows.length? <div className="workorder-list">{rows.map(wo=><WorkOrderRow key={wo.id} order={wo} expanded={expanded===wo.id} history={history.data||[]} onExpand={()=>setExpanded(expanded===wo.id?null:wo.id)} onUpdate={(body)=>mutation.mutate({id:wo.id,body})} pending={mutation.isPending}/>)}</div>:<EmptyState title="No work orders in this view" description="Create a draft from a maintenance recommendation, then approve and schedule it here."/>}
   </section>
   <div className="planning-note"><Clock3 size={16}/><span><b>Scheduling policy:</b> no repair dates are generated. A user must explicitly approve an order, choose its date and transition it to SCHEDULED.</span></div>
  </>
